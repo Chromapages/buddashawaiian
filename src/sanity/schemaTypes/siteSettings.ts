@@ -1,0 +1,173 @@
+// sanity/schemaTypes/siteSettings.ts
+import { defineType, defineField } from "sanity";
+
+const siteSettings = defineType({
+    name: "siteSettings",
+    title: "Site Settings",
+    type: "document",
+    fields: [
+        defineField({
+            name: "title",
+            title: "Site Title",
+            type: "string",
+            validation: (Rule) => Rule.required(),
+        }),
+        defineField({
+            name: "tagline",
+            title: "Tagline",
+            type: "string",
+        }),
+        defineField({
+            name: "favicon",
+            title: "Favicon",
+            type: "image",
+            description: "Icon used for browser tabs and bookmarks.",
+            options: { hotspot: true },
+            fields: [
+                defineField({
+                    name: "alt",
+                    title: "Alt Text",
+                    type: "string",
+                    validation: (Rule) => Rule.required(),
+                }),
+            ],
+        }),
+        defineField({
+            name: "logo",
+            title: "Logo",
+            type: "image",
+            description: "Logo image for the header/navbar.",
+            options: { hotspot: true },
+            fields: [
+                defineField({
+                    name: "alt",
+                    title: "Alt Text",
+                    type: "string",
+                }),
+            ],
+        }),
+        defineField({
+            name: "headerCtaStyle",
+            title: "Header CTA Style",
+            type: "string",
+            description: "Controls the color of the 'Order Now' button in the header.",
+            options: {
+                list: [
+                    { title: "Teal", value: "teal" },
+                    { title: "Gold", value: "gold" },
+                    { title: "Cream", value: "cream" },
+                    { title: "Brown", value: "brown" },
+                    { title: "Orange", value: "orange" },
+                    { title: "Dark", value: "dark" },
+                    { title: "Thanksgiving", value: "thanksgiving" },
+                    { title: "Christmas", value: "christmas" },
+                ],
+                layout: "radio",
+            },
+            initialValue: "teal",
+        }),
+        defineField({
+            name: "heroSlides",
+            title: "Home Page Hero Slides",
+            type: "array",
+            of: [{ type: "heroSlide" }],
+            description: "Add one or more slides for the homepage hero section.",
+        }),
+        defineField({
+            name: "mainNavigation",
+            title: "Main Navigation",
+            type: "array",
+            description: "Links to show in the header navigation.",
+            of: [
+                defineField({
+                    name: "navItem",
+                    title: "Nav Item",
+                    type: "object",
+                    fields: [
+                        defineField({
+                            name: "label",
+                            title: "Label",
+                            type: "string",
+                            validation: (Rule) => Rule.required(),
+                        }),
+                        defineField({
+                            name: "url",
+                            title: "URL",
+                            type: "string",
+                            description: "Relative path (e.g. /menu) or full URL.",
+                            validation: (Rule) => Rule.required(),
+                        }),
+                    ],
+                    preview: {
+                        select: {
+                            title: "label",
+                            subtitle: "url",
+                        },
+                    },
+                }),
+            ],
+        }),
+        defineField({
+            name: "primaryPhone",
+            title: "Primary Phone",
+            type: "string",
+        }),
+        defineField({
+            name: "primaryEmail",
+            title: "Primary Email",
+            type: "string",
+        }),
+        defineField({
+            name: "defaultOrderingUrl",
+            title: "Default Ordering URL",
+            type: "url",
+        }),
+        defineField({
+            name: "socialLinks",
+            title: "Social Links",
+            type: "array",
+            of: [
+                defineField({
+                    name: "socialLink",
+                    title: "Social Link",
+                    type: "object",
+                    fields: [
+                        defineField({
+                            name: "platform",
+                            title: "Platform",
+                            type: "string",
+                            options: {
+                                list: [
+                                    { title: "Instagram", value: "instagram" },
+                                    { title: "TikTok", value: "tiktok" },
+                                    { title: "Facebook", value: "facebook" },
+                                    { title: "X (Twitter)", value: "x" },
+                                    { title: "YouTube", value: "youtube" },
+                                    { title: "Other", value: "other" },
+                                ],
+                            },
+                        }),
+                        defineField({
+                            name: "label",
+                            title: "Label",
+                            type: "string",
+                        }),
+                        defineField({
+                            name: "url",
+                            title: "URL",
+                            type: "url",
+                            validation: (Rule) => Rule.uri({ allowRelative: false }),
+                        }),
+                    ],
+                }),
+            ],
+        }),
+        defineField({
+            name: "seo",
+            title: "Default SEO",
+            type: "seo",
+        }),
+    ],
+});
+
+export default siteSettings;
