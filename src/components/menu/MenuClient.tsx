@@ -16,6 +16,7 @@ import {
     ShoppingBag
 } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
 
 interface MenuClientProps {
     categories: any[];
@@ -72,8 +73,8 @@ export function MenuClient({ categories }: MenuClientProps) {
                     />
                 </div>
 
-                <div className="max-w-7xl mx-auto px-6 relative z-10 text-center space-y-6">
-                    <span className="inline-block py-1 px-3 rounded-full bg-teal-100 text-[#145B57] text-xs font-bold uppercase tracking-wider mb-2 animate-in fade-in zoom-in duration-500">
+                <AnimatedSection className="max-w-7xl mx-auto px-6 relative z-10 text-center space-y-6">
+                    <span className="inline-block py-1 px-3 rounded-full bg-teal-100 text-[#145B57] text-xs font-bold uppercase tracking-wider mb-2 shadow-sm">
                         Fresh From Kitchen
                     </span>
                     <h1 className="text-5xl md:text-7xl font-bold text-zinc-900 tracking-tight font-poppins drop-shadow-md">
@@ -82,7 +83,7 @@ export function MenuClient({ categories }: MenuClientProps) {
                     <p className="text-xl text-zinc-500 max-w-2xl mx-auto">
                         Explore our wide range of organic, healthy, and fresh meals prepared with love by our expert chefs.
                     </p>
-                </div>
+                </AnimatedSection>
             </header>
 
             {/* Category Filter (Sticky) */}
@@ -141,29 +142,33 @@ export function MenuClient({ categories }: MenuClientProps) {
             {/* Menu Grid */}
             <section className="py-16 relative z-10 bg-white">
                 <div className="max-w-[1920px] mx-auto px-6 md:px-10">
-                    {displayedItems.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
-                            {displayedItems.map((item: any) => (
-                                <MenuCard
-                                    key={item._id}
-                                    item={item}
-                                    onClick={() => setSelectedItem(item)} // Pass handler
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-20 text-zinc-400">
-                            <Utensils className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                            <p>No items found in this category.</p>
-                        </div>
-                    )}
+                    <AnimatedSection delay={100}>
+                        {displayedItems.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
+                                {displayedItems.map((item: any) => (
+                                    <MenuCard
+                                        key={item._id}
+                                        item={item}
+                                        onClick={() => setSelectedItem(item)} // Pass handler
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-20 text-zinc-400">
+                                <Utensils className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                <p>No items found in this category.</p>
+                            </div>
+                        )}
+                    </AnimatedSection>
 
                     {/* Load More (Visual only for now) */}
                     <div className="mt-16 text-center">
-                        <button className="inline-flex items-center gap-2 bg-white border-b-4 border-zinc-100 text-zinc-900 font-semibold px-8 py-4 rounded-xl hover:border-[#145B57] hover:text-[#145B57] transition-all shadow-[0_4px_10px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-1 active:border-b-0 active:translate-y-1 group">
-                            <span>Load More Items</span>
-                            <RotateCcw className="w-5 h-5 group-hover:rotate-180 transition-transform duration-700" />
-                        </button>
+                        <AnimatedSection delay={200} direction="up">
+                            <button className="inline-flex items-center gap-2 bg-white border-b-4 border-zinc-100 text-zinc-900 font-semibold px-8 py-4 rounded-xl hover:border-[#145B57] hover:text-[#145B57] transition-all shadow-[0_4px_10px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-1 active:border-b-0 active:translate-y-1 group">
+                                <span>Load More Items</span>
+                                <RotateCcw className="w-5 h-5 group-hover:rotate-180 transition-transform duration-700" />
+                            </button>
+                        </AnimatedSection>
                     </div>
                 </div>
             </section>

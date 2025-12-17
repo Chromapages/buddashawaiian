@@ -6,9 +6,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter-tight);
+  --font-sans: var(--font-dm-sans);
   --font-display: var(--font-lilita);
-  --font-body: var(--font-inter-tight);
+  --font-body: var(--font-dm-sans);
   --font-poppins: var(--font-poppins);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -43,23 +43,81 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-buddas-teal: #54BFA5;
-  --color-buddas-gold: #E9C559;
-  --color-buddas-cream: #FAF2D8;
-  --color-buddas-brown: #3D2A1A;
-  --color-buddas-orange: #F38D2D;
-  --color-buddas-dark: #1D130C;
+  /* Expanded Brand Palette - Official Guidelines (Option A) */
+
+  /* A. Primary Teals */
+  --color-buddas-teal-base: #54BFA5;
+  /* The Brand Anchor */
+  --color-buddas-teal-dark: #1C5F56;
+  /* Text on Teal / Footer */
+  --color-buddas-teal-light: #7ACDB9;
+  /* Est. Lighter shade for hovers */
+  --color-buddas-teal-pale: #E0F2EF;
+  /* Est. Pale shade for backgrounds */
+
+  /* Mapping for Compatibility */
+  --color-buddas-teal: var(--color-buddas-teal-base);
+
+  /* B. Island Golds */
+  --color-buddas-gold-base: #E9C559;
+  /* Value / Actions */
+  --color-buddas-gold-dark: #B38F24;
+  /* Est. Darker shade for text on gold */
+  --color-buddas-gold-light: #F0D57A;
+  /* Est. Lighter shade */
+  --color-buddas-gold-pale: #FCF4D9;
+  /* Est. Pale shade */
+
+  /* Mapping for Compatibility */
+  --color-buddas-gold: var(--color-buddas-gold-base);
+
+  /* C. Neutrals & Canvas */
+  --color-buddas-brown-base: #5A3A1F;
+  /* Primary Text (Cocoa Brown) */
+  --color-buddas-brown-dark: #3B2314;
+  /* Deepest Brown */
+
+  /* Mapping for Compatibility */
+  --color-buddas-brown: var(--color-buddas-brown-base);
+
+  --color-buddas-cream-base: #FFF8E8;
+  /* "Rice Paper" Background */
+  --color-buddas-cream: var(--color-buddas-cream-base);
+
   --color-buddas-white: #FFFFFF;
 
-  /* Retro-Future Aloha Palette */
+  /* D. Utility Colors */
+  --color-buddas-orange: #D36200;
+  /* Sunset Orange (Urgency) */
+  --color-buddas-green: #5D8E42;
+  /* Fresh Green */
+
+  /* Deprecated/Legacy Palette - Keeping broadly compatible mappings */
+  --color-buddas-dark: var(--color-buddas-brown-dark);
+
+  /* Retro-Future Aloha Palette (Preserved/Mapped where needed) */
   --color-guava-punch: #FA5252;
-  --color-warm-sand: #FDF6E3;
+  --color-warm-sand: var(--color-buddas-cream-base);
   --color-deep-ocean: #1E3A8A;
   --color-golden-glaze: #F59E0B;
+
+  /* Motion System */
+  --ease-aloha: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 @utility glass-panel {
   @apply backdrop-blur-xl bg-white/20 border border-white/30;
+}
+
+/* Typography Letter Spacing Utilities (Per Brand Guide) */
+@utility tracking-headline {
+  letter-spacing: -0.02em;
+  /* Tight for Poppins headlines */
+}
+
+@utility tracking-body {
+  letter-spacing: 0;
+  /* Normal for DM Sans body */
 }
 
 :root {

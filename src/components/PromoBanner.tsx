@@ -1,167 +1,172 @@
 "use client";
 
-import { Copy, Star, ArrowRight, ShoppingBag } from "lucide-react";
-import Image from "next/image";
+import { urlFor } from "@/sanity/lib/image";
+import { ArrowRight, Tag, Sparkles, MapPin, ExternalLink, Copy, Check, MousePointerClick } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 interface Promotion {
     _id: string;
     title: string;
-    badge?: string;
-    description?: string;
-    promoCode?: string;
-    ctaLabel?: string;
-    ctaLink?: string;
-    type: "code" | "rewards" | "product"; // To distinguish card layouts
-    image?: string;
+    description: string;
+    image?: any;
+    link?: string;
+    buttonText?: string;
+    ctaType?: 'link' | 'coupon' | 'external'; // New optional field
+    couponCode?: string; // New optional field
 }
 
 interface PromoBannerProps {
     promotions?: Promotion[];
 }
 
-const defaultPromotions: Promotion[] = [
-    {
-        _id: "default-1",
-        title: "Lunch Rush Special",
-        description: "Escape to the islands on your lunch break. Enjoy 20% off all Bento Boxes until 2 PM.",
-        promoCode: "ALOHA20",
-        type: "code"
-    },
-    {
-        _id: "default-2",
-        title: "Double Points Day",
-        badge: "Rewards Member",
-        description: "Earn 2x points on every dollar spent today. Treat yourself to something sweet!",
-        ctaLabel: "View Rewards",
-        ctaLink: "/rewards",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBQazFj7kzuFoMECfaqScamrhL8xNCxlAzff1rntZnW5w6SmRtRwPAHlps_i9fwQOhDRgwdEG-lxUKnOCivKgn-NqEp3FXkaMKmFnGY-aUQX8ktUeEHrfAIjdGrBpWDfhnLEg-tNJ_i2FoBczJpJIarcPnFGBoNhPA9AojZ7KAQPBZnn-JyZjy9q2itjR0i0bTBNmJBvhtASEGv97FloCsGYpt-nGXosH-Le6kspOLl0jBK8tu5XLx0SZPKTSNKBC5cdnkwiatfRBGG",
-        type: "rewards"
-    },
-    {
-        _id: "default-3",
-        title: "Try the Katsu Chicken",
-        badge: "New Arrival",
-        description: "Crispy panko-breaded chicken served island-style with our signature mac salad and rice.",
-        ctaLabel: "Order Now",
-        ctaLink: "/menu",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCXQ5GRIA2p2sGdUi1oAVh3JEvHAwDK_gOjEahoIZDThW0BPI73goVE2NYkZXQLsF_iWj01vxMDJpEO-ibnLK69C66xmoaIFNTpbr0ytl-lo2ZqOzpcz1e7sb3TAPfhWMPisNe7e2uppIyGWejtJToZp5oGyj4WtLi7R9jA7rj9ezZMrYRtkB0XmWPxX5on6NRheu0-1Yuey9pBSEpFptuqI3lp8y3G3DPaJP01Fa1LXjdwS6SihwrouBlcxcfo3ein8KSfVdY3iu_Y",
-        type: "product"
-    },
-];
-
-export function PromoBanner({ promotions }: PromoBannerProps) {
-    // If we have Sanity promos, we would map them here, but for this specific redesign request, 
-    // the user provided hardcoded content. We'll prioritize the default layout to match the prompt exactly.
-    // In a real scenario, we might merge or map provided 'promotions' prop to this structure.
-
-    // For now, using the defaults to ensure it matches the user's specific request "redesign ... to this"
-    const displayPromos = defaultPromotions;
+export function PromoBanner({ promotions = [] }: PromoBannerProps) {
+    if (!promotions || promotions.length === 0) return null;
 
     return (
-        <section className="max-w-[1280px] xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-6 lg:px-8 xl:px-12 2xl:px-16 pt-12 pb-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="max-w-[1920px] mx-auto px-6 md:px-10 lg:px-12 xl:px-16 py-16 md:py-24">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                {promotions.slice(0, 3).map((promo, idx) => (
+                    <PromoCard key={promo._id || idx} promo={promo} />
+                ))}
+            </div>
+        </div>
+    );
+}
 
-                {/* Card 1: Code Promo */}
-                <div className="group relative flex flex-col bg-white rounded-3xl overflow-hidden shadow-lg border border-zinc-100 hover:shadow-xl transition-shadow">
-                    <div className="relative h-64 overflow-hidden">
-                        <div className="relative w-full h-full">
-                            <Image
-                                alt="Lunch Bento Box"
-                                src="https://images.unsplash.com/photo-1617093727343-374698b1b08d?q=80&w=800&auto=format&fit=crop"
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
-                        </div>
-                        <div className="absolute top-4 left-4 z-20">
-                            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#E9C559]/90 backdrop-blur-md text-[#3A2F2B] text-xs font-bold uppercase tracking-wider shadow-sm border border-[#E9C559]/50">
-                                Expires in 2h
-                            </div>
-                        </div>
+function PromoCard({ promo }: { promo: Promotion }) {
+    const [isCopied, setIsCopied] = useState(false);
+
+    // Robust Image Logic
+    let imageUrl: string | null = null;
+    try {
+        if (typeof promo.image === 'string') {
+            imageUrl = promo.image;
+        } else if (promo.image?.asset?.url) {
+            imageUrl = promo.image.asset.url;
+        } else if (promo.image) {
+            imageUrl = urlFor(promo.image).width(800).height(600).url();
+        }
+    } catch (e) {
+        console.error("Error resolving image for promo:", promo.title);
+    }
+
+    // Determine CTA Type Strategy
+    const ctaType = promo.ctaType || (promo.couponCode ? 'coupon' : (promo.link?.includes('spoton') || promo.link?.startsWith('http') ? 'external' : 'link'));
+
+    const handleCopy = () => {
+        if (promo.couponCode) {
+            navigator.clipboard.writeText(promo.couponCode);
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
+        }
+    };
+
+    return (
+        <div className="group flex flex-col bg-white rounded-[1.5rem] shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden h-full border border-zinc-100 relative">
+
+            {/* Image Section */}
+            <div className="relative h-[240px] w-full overflow-hidden bg-zinc-100 shrink-0">
+                {imageUrl ? (
+                    <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                        style={{ backgroundImage: `url(${imageUrl})` }}
+                    ></div>
+                ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-buddas-teal/10 to-teal-50 flex items-center justify-center">
+                        <Sparkles className="w-10 h-10 text-buddas-teal/20" />
                     </div>
-                    <div className="p-8 flex flex-col flex-grow bg-white">
-                        <div className="mb-4">
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2 font-[family-name:var(--font-poppins)]">Lunch Rush Special</h3>
-                            <p className="text-gray-600 text-sm leading-relaxed">Escape to the islands on your lunch break. Enjoy 20% off all Bento Boxes until 2 PM.</p>
-                        </div>
-                        <div className="mt-auto pt-6 border-t border-gray-100">
-                            <div className="bg-[#E9C559]/10 rounded-xl p-4 flex items-center justify-between hover:bg-[#E9C559]/20 transition-colors cursor-pointer border border-[#E9C559]/20 group">
-                                <div className="flex flex-col">
-                                    <span className="text-xs text-[#3A2F2B]/70 font-bold uppercase tracking-wider mb-1">Use Code</span>
-                                    <span className="text-[#3A2F2B] font-mono text-xl font-bold tracking-wide">ALOHA20</span>
+                )}
+
+                {/* Floating Badge - UNIFIED GOLD THEME */}
+                <div className="absolute top-4 left-4 z-10">
+                    <span
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm bg-amber-100/95 text-amber-800 border border-amber-200"
+                    >
+                        <Tag className="w-3 h-3" />
+                        {ctaType === 'coupon' ? 'Exclusive Code' : 'Limited Time'}
+                    </span>
+                </div>
+            </div>
+
+            {/* Content Section */}
+            <div className="p-6 md:p-8 flex flex-col flex-1 relative bg-white">
+                {/* Decorative border accent */}
+                <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-zinc-200 to-transparent"></div>
+
+                <h3 className="text-xl md:text-2xl font-bold text-zinc-900 font-poppins mb-3 leading-tight transition-colors">
+                    {promo.title}
+                </h3>
+
+                <p className="text-zinc-500 text-sm md:text-base leading-relaxed mb-8 line-clamp-3">
+                    {promo.description}
+                </p>
+
+                <div className="mt-auto w-full">
+                    {/* CTA: Coupon Code (Gold Theme) */}
+                    {ctaType === 'coupon' && promo.couponCode && (
+                        <div className="flex flex-col gap-2">
+                            <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider pl-1">Use Code at Checkout</div>
+                            <button
+                                onClick={handleCopy}
+                                className="w-full flex items-center justify-between bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 px-5 py-4 rounded-xl font-mono font-bold transition-all duration-200 group/btn relative overflow-hidden active:scale-95"
+                            >
+                                <span className="text-lg tracking-widest relative z-10">{promo.couponCode}</span>
+                                <div className="flex items-center gap-2 relative z-10">
+                                    <span className="text-[10px] font-sans font-bold uppercase opacity-60">
+                                        {isCopied ? "Copied!" : "Click to Copy"}
+                                    </span>
+                                    {isCopied ? (
+                                        <Check className="w-5 h-5 text-buddas-teal" />
+                                    ) : (
+                                        <Copy className="w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-opacity" />
+                                    )}
                                 </div>
-                                <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-[#3A2F2B] shadow-sm hover:scale-110 transition-transform active:scale-95">
-                                    <Copy className="w-5 h-5" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Card 2: Rewards Promo */}
-                <div className="group relative flex flex-col bg-white rounded-3xl overflow-hidden shadow-lg border border-zinc-100 hover:shadow-xl transition-shadow">
-                    <div className="relative h-64 overflow-hidden">
-                        <div className="relative w-full h-full">
-                            <Image
-                                alt="Sweet Treats"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQazFj7kzuFoMECfaqScamrhL8xNCxlAzff1rntZnW5w6SmRtRwPAHlps_i9fwQOhDRgwdEG-lxUKnOCivKgn-NqEp3FXkaMKmFnGY-aUQX8ktUeEHrfAIjdGrBpWDfhnLEg-tNJ_i2FoBczJpJIarcPnFGBoNhPA9AojZ7KAQPBZnn-JyZjy9q2itjR0i0bTBNmJBvhtASEGv97FloCsGYpt-nGXosH-Le6kspOLl0jBK8tu5XLx0SZPKTSNKBC5cdnkwiatfRBGG"
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
-                        </div>
-                        <div className="absolute top-4 left-4 z-20">
-                            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#E9C559]/90 backdrop-blur-md text-[#3A2F2B] text-xs font-bold uppercase tracking-wider shadow-sm border border-[#E9C559]/50">
-                                <Star className="w-3.5 h-3.5 mr-1 fill-current" />
-                                Rewards Member
-                            </div>
-                        </div>
-                    </div>
-                    <div className="p-8 flex flex-col flex-grow bg-white">
-                        <div className="mb-4">
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2 font-[family-name:var(--font-poppins)]">Double Points Day</h3>
-                            <p className="text-gray-600 text-sm leading-relaxed">Earn 2x points on every dollar spent today. Treat yourself to something sweet!</p>
-                        </div>
-                        <div className="mt-auto pt-6 border-t border-gray-100">
-                            <Link href="/rewards" className="w-full bg-[#E9C559] text-[#3A2F2B] font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-[#E9C559]/20 hover:bg-[#D4B040] transition-all flex items-center justify-center group-hover:gap-3 gap-2">
-                                View Rewards
-                                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Card 3: New Menu Item */}
-                <div className="group relative flex flex-col bg-white rounded-3xl overflow-hidden shadow-lg border border-zinc-100 hover:shadow-xl transition-shadow">
-                    <div className="relative h-64 overflow-hidden">
-                        <div className="relative w-full h-full">
-                            <Image
-                                alt="Chicken Katsu"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXQ5GRIA2p2sGdUi1oAVh3JEvHAwDK_gOjEahoIZDThW0BPI73goVE2NYkZXQLsF_iWj01vxMDJpEO-ibnLK69C66xmoaIFNTpbr0ytl-lo2ZqOzpcz1e7sb3TAPfhWMPisNe7e2uppIyGWejtJToZp5oGyj4WtLi7R9jA7rj9ezZMrYRtkB0XmWPxX5on6NRheu0-1Yuey9pBSEpFptuqI3lp8y3G3DPaJP01Fa1LXjdwS6SihwrouBlcxcfo3ein8KSfVdY3iu_Y"
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
-                        </div>
-                        <div className="absolute top-4 left-4 z-20">
-                            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#E9C559]/90 backdrop-blur-md text-[#3A2F2B] text-xs font-bold uppercase tracking-wider shadow-sm border border-[#E9C559]/50">
-                                New Arrival
-                            </div>
-                        </div>
-                    </div>
-                    <div className="p-8 flex flex-col flex-grow bg-white">
-                        <div className="mb-4">
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2 font-[family-name:var(--font-poppins)]">Try the Katsu Chicken</h3>
-                            <p className="text-gray-600 text-sm leading-relaxed">Crispy panko-breaded chicken served island-style with our signature mac salad and rice.</p>
-                        </div>
-                        <div className="mt-auto pt-6 border-t border-gray-100">
-                            <button className="w-full bg-[#E9C559] text-[#3A2F2B] font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-[#E9C559]/20 hover:bg-[#D4B040] transition-all flex items-center justify-center group-hover:gap-3 gap-2">
-                                Order Now
-                                <ShoppingBag className="w-4 h-4 transition-transform group-hover:-rotate-12" />
                             </button>
                         </div>
-                    </div>
-                </div>
+                    )}
 
+                    {/* CTA: External Order (SpotOn) - GOLD/ORANGE THEME */}
+                    {ctaType === 'external' && (
+                        <Link
+                            href={promo.link || "#"}
+                            target="_blank"
+                            className="w-full flex items-center justify-center gap-3 bg-buddas-gold hover:bg-teal-600 text-white px-5 py-4 rounded-xl font-bold shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all duration-300 active:scale-95 group/btn"
+                        >
+                            <span className="text-sm uppercase tracking-wide">
+                                {promo.buttonText || "Order on SpotOn"}
+                            </span>
+                            <ExternalLink className="w-4 h-4" />
+                        </Link>
+                    )}
+
+                    {/* CTA: Internal Link - BLACK -> GOLD/ORANGE THEME */}
+                    {ctaType === 'link' && (
+                        <Link
+                            href={promo.link || "/menu"}
+                            className="w-full flex items-center justify-between bg-buddas-gold hover:bg-teal-600 text-white px-5 py-4 rounded-xl font-bold transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 group/btn"
+                        >
+                            <span className="text-sm uppercase tracking-wide">
+                                {promo.buttonText || "View Details"}
+                            </span>
+                            <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                        </Link>
+                    )}
+
+                    {/* CTA: Fallback (Location) - GREY -> LIGHT GOLD THEME */}
+                    {!ctaType && !promo.link && !promo.couponCode && (
+                        <Link
+                            href="/contact"
+                            className="w-full flex items-center justify-between bg-zinc-50 hover:bg-amber-50 text-zinc-900 px-5 py-4 rounded-xl font-bold transition-all duration-300 active:scale-95 group/btn border border-zinc-200/50 hover:border-amber-200"
+                        >
+                            <span className="text-sm uppercase tracking-wide">
+                                Visit Location
+                            </span>
+                            <MapPin className="w-4 h-4 text-zinc-400 group-hover/btn:text-amber-600 transition-colors" />
+                        </Link>
+                    )}
+                </div>
             </div>
-        </section>
+        </div>
     );
 }

@@ -10,6 +10,7 @@ import { NewCateringSection } from "@/components/NewCateringSection";
 import { NewAboutSection } from "@/components/NewAboutSection";
 import { AppDownloadCTA } from "@/components/AppDownloadCTA";
 import { NewTestimonialsSection } from "@/components/NewTestimonialsSection";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { urlFor } from "@/sanity/lib/image";
 
 // Keep existing metadata logic for now, but we might want to update it later
@@ -117,26 +118,38 @@ export default async function Home() {
     <div className="min-h-screen bg-zinc-50 text-zinc-900 font-sans selection:bg-teal-500 selection:text-white">
 
       <main>
-        <NewHero heroSlides={heroSlides} />
+        <AnimatedSection>
+          <NewHero heroSlides={heroSlides} />
+        </AnimatedSection>
 
-        <MenuOffersSection
-          featuredItems={bentoItems}
-          popularItems={popularItems}
-          newItems={newItems}
-          promotions={data?.promotions}
-          trustedByData={data?.trustedByData}
-        />
+        <AnimatedSection delay={200}>
+          <MenuOffersSection
+            featuredItems={bentoItems}
+            popularItems={popularItems}
+            newItems={newItems}
+            promotions={data?.promotions}
+            trustedByData={data?.trustedByData}
+          />
+        </AnimatedSection>
 
-        <NewCateringSection cateringData={data?.cateringData} />
+        <AnimatedSection delay={200}>
+          <NewCateringSection cateringData={data?.cateringData} />
+        </AnimatedSection>
 
-        <NewAboutSection aboutData={data?.aboutData} />
+        <AnimatedSection delay={200}>
+          <NewAboutSection aboutData={data?.aboutData} />
+        </AnimatedSection>
 
-        <NewTestimonialsSection testimonials={data?.testimonials} />
+        <AnimatedSection delay={200}>
+          <NewTestimonialsSection testimonials={data?.testimonials} />
+        </AnimatedSection>
 
-        <AppDownloadCTA />
+        <AnimatedSection delay={400}>
+          <AppDownloadCTA />
+        </AnimatedSection>
       </main>
 
       <Footer />
-    </div>
+    </div >
   );
 }

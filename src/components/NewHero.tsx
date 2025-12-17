@@ -1,9 +1,11 @@
 "use client";
 
-import { PlayCircle, Truck, ShoppingBag, ChevronLeft, ChevronRight, Heart, ArrowRight } from "lucide-react";
+import { ShoppingBag, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
+import { Button } from "@/components/ui/button";
+import { MICROCOPY } from "@/lib/microcopy";
 
 interface NewHeroProps {
     heroSlides?: any[];
@@ -56,39 +58,46 @@ export function NewHero({ heroSlides }: NewHeroProps) {
             <div className="relative z-10 w-full max-w-[1280px] xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-36 pb-32 md:pb-48 md:pt-44 lg:pt-48 grid lg:grid-cols-2 gap-12 2xl:gap-16 items-center">
 
                 {/* Left Column: Text */}
-                <div className="space-y-8 max-w-2xl 2xl:max-w-3xl animate-in slide-in-from-bottom-8 fade-in duration-700">
-                    <h1 className="text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl font-black text-white tracking-tight leading-[1.1] drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] font-[family-name:var(--font-poppins)]">
+                <div className="space-y-8 max-w-2xl 2xl:max-w-3xl animate-in slide-in-from-bottom-8 fade-in duration-700 ease-[var(--ease-aloha)]">
+                    <h1 className="text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl font-semibold text-white tracking-tight leading-[1.1] drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] font-[family-name:var(--font-poppins)]">
                         {heroTitle}
                     </h1>
-                    <p className="text-xl md:text-2xl 2xl:text-3xl text-teal-50 font-medium leading-relaxed max-w-lg 2xl:max-w-2xl opacity-95 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
+                    <p className="text-xl md:text-2xl 2xl:text-3xl text-white/90 font-medium leading-relaxed max-w-lg 2xl:max-w-2xl opacity-95 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
                         {heroSubtitle}
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                        <Link
-                            href={primaryCtaLink}
-                            className="group flex items-center justify-center gap-2 bg-[#d4a017] text-teal-950 px-8 py-4 rounded-xl text-lg font-bold transition-all shadow-[0_4px_0_0_#8a680f,0_8px_20px_-4px_rgba(0,0,0,0.4)] hover:translate-y-[-2px] hover:shadow-[0_6px_0_0_#8a680f,0_12px_24px_-4px_rgba(0,0,0,0.5)] active:translate-y-1 active:shadow-[0_0_0_0_#8a680f,inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                        <Button
+                            asChild
+                            variant="default" // Teal Primary
+                            size="xl"
+                            className="rounded-xl shadow-lg hover:shadow-teal-500/20 hover:bg-buddas-teal-dark"
                         >
-                            <span>{primaryCtaLabel}</span>
-                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </Link>
+                            <Link href={primaryCtaLink}>
+                                <span>{primaryCtaLabel || MICROCOPY.orderNow}</span>
+                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                        </Button>
 
-                        <Link
-                            href={secondaryCtaLink}
-                            className="flex items-center justify-center gap-2 bg-white/10 text-white px-8 py-4 rounded-xl text-lg font-medium transition-all backdrop-blur-md border border-white/20 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.3)] hover:bg-white/20 hover:scale-105 hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.4)] active:scale-95"
+                        {/* 
+                            EXCEPTION: Secondary button uses 'outline' style (White Glass) instead of strict Teal Border 
+                            to ensure readability against the dark hero background. 
+                        */}
+                        <Button
+                            asChild
+                            variant="outline" // Glass/Outline style (Exception for Hero contrast)
+                            size="xl"
+                            className="rounded-xl border-white/20 text-white bg-white/10 hover:bg-white/20 hover:text-white backdrop-blur-md shadow-lg"
                         >
-                            <span>{secondaryCtaLabel}</span>
-                            <ShoppingBag className="w-5 h-5" />
-                        </Link>
+                            <Link href={secondaryCtaLink}>
+                                <span>{secondaryCtaLabel || MICROCOPY.viewMenu}</span>
+                                <ShoppingBag className="w-5 h-5" />
+                            </Link>
+                        </Button>
                     </div>
 
-                    <div className="flex items-center gap-4 pt-4 text-teal-100/80 text-base">
-                        <div className="flex -space-x-3">
-                            <img className="w-10 h-10 rounded-full border-2 border-white/20" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100" alt="Customer" />
-                            <img className="w-10 h-10 rounded-full border-2 border-white/20" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&h=100" alt="Customer" />
-                            <img className="w-10 h-10 rounded-full border-2 border-white/20" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100" alt="Customer" />
-                        </div>
-                        <p className="drop-shadow-sm">Loved by 12,000+ happy islanders</p>
+                    <div className="flex items-center gap-4 pt-4 text-teal-100/80 text-base font-medium">
+                        <p className="drop-shadow-sm border-l-2 border-buddas-orange pl-4">{MICROCOPY.socialProof}</p>
                     </div>
                 </div>
 
@@ -96,15 +105,9 @@ export function NewHero({ heroSlides }: NewHeroProps) {
                 <div className="hidden lg:block relative h-full min-h-[400px]">
                     {/* Content removed to let background shine through, as requested */}
                 </div>
-            </div>
+            </div >
 
             {/* Wave Dividers */}
-
-
-            {/* Product Carousel - Preserved Below */}
-            <div className="max-w-7xl mx-auto px-6 mt-8 relative z-40 hidden">
-                {/* ... Hidden for now as user asked to match design, but keeping in code structure if needed to re-enable ... */}
-            </div>
-        </section>
+        </section >
     );
 }

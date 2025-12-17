@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
-import { Inter_Tight, Lilita_One, Poppins } from "next/font/google"; // Added Poppins
+import { DM_Sans, Lilita_One, Poppins } from "next/font/google"; // Switched Inter_Tight to DM_Sans for body text
+
 import "./globals.css";
 import { client } from "@/sanity/lib/client";
 import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { ConditionalHeader } from "@/components/ConditionalHeader";
 
-const interTight = Inter_Tight({
-  variable: "--font-inter-tight",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  weight: ["400", "500"], // Regular (body), Medium (buttons/nav)
   subsets: ["latin"],
 });
 
@@ -19,7 +21,7 @@ const lilitaOne = Lilita_One({
 
 const poppins = Poppins({
   variable: "--font-poppins",
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["500", "600"], // Medium (sub-headers/prices), SemiBold (H1/H2/Hero)
   subsets: ["latin"],
 });
 
@@ -72,8 +74,13 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet" />
+      </head>
       <body
-        className={`${interTight.variable} ${lilitaOne.variable} ${poppins.variable} antialiased bg-warm-sand text-deep-ocean`}
+        className={`${dmSans.variable} ${lilitaOne.variable} ${poppins.variable} antialiased bg-warm-sand text-deep-ocean`}
         suppressHydrationWarning
       >
         <ConditionalHeader logoUrl={logoUrl} orderUrl={orderUrl} ctaStyle={ctaStyle} />

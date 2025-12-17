@@ -1,49 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Flame } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 interface NewNavbarProps {
     logoUrl?: string;
     orderUrl?: string;
-    ctaStyle?: string;
 }
 
+// Remove MotionLink creation as we use standard components or motion.div
 const MotionLink = motion.create(Link);
 
-export function NewNavbar({ logoUrl, orderUrl, ctaStyle }: NewNavbarProps) {
+export function NewNavbar({ logoUrl, orderUrl }: NewNavbarProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
     const defaultOrderUrl = "https://order.toasttab.com/online/buddas-hawaiian-bbq-pleasant-grove-pg-123-state-st";
 
-    // Map Sanity CTA styles to Tailwind classes
-    const getCtaColors = (style?: string) => {
-        switch (style) {
-            case "gold":
-                return "bg-[#E9C559] text-[#3A2F2B] hover:bg-[#1C5F56] hover:text-[#FAF2D8] active:bg-[#54BFA5] active:text-[#3A2F2B] focus:outline-none focus:ring-2 focus:ring-[#1C5F56] focus:ring-offset-2";
-            case "orange":
-                return "bg-orange-600 text-white hover:bg-orange-700";
-            case "teal":
-                return "bg-teal-600 text-white hover:bg-teal-700";
-            case "brown":
-                return "bg-amber-900 text-white hover:bg-amber-950";
-            case "cream":
-                return "bg-stone-100 text-zinc-900 hover:bg-stone-200 border border-zinc-200";
-            case "thanksgiving":
-                return "bg-teal-800 text-white hover:bg-teal-900";
-            case "christmas":
-                return "bg-red-700 text-white hover:bg-red-800";
-            case "dark":
-            default:
-                // Canonical Primary CTA as requested (Gold)
-                return "bg-[#E9C559] text-[#3A2F2B] hover:bg-[#1C5F56] hover:text-[#FAF2D8] active:bg-[#54BFA5] active:text-[#3A2F2B] focus:outline-none focus:ring-2 focus:ring-[#1C5F56] focus:ring-offset-2";
-        }
-    };
-
-    const ctaClasses = getCtaColors(ctaStyle);
+    const alohaEase = [0.25, 0.1, 0.25, 1] as any;
 
     // Hardcoded Nav Links as requested
     const navLinks = [
@@ -83,7 +60,7 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle }: NewNavbarProps) {
     };
 
     return (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-[#fff8e8] dark:bg-zinc-900 border-b-0 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1),inset_0_1px_0_0_rgba(255,255,255,0.8)] transition-all duration-300">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-buddas-cream dark:bg-zinc-900 border-b-0 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1),inset_0_1px_0_0_rgba(255,255,255,0.8)] transition-all duration-300">
             <div className="w-full px-6 lg:px-12 xl:px-16">
                 <header className="flex items-center justify-between py-4">
                     {/* Logo Section */}
@@ -94,21 +71,19 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle }: NewNavbarProps) {
                                 whileHover={{ y: -1 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
                             >
-                                {logoUrl ? (
+                                {logoUrl && (
                                     <motion.img
                                         src={logoUrl}
-                                        alt="Hula Grill & Bakery"
+                                        alt="Buddas Hawaiian"
                                         className="h-16 w-auto object-contain drop-shadow-sm"
                                         whileHover={{ scale: 1.05 }}
-                                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                                        transition={{
+                                            type: "spring",
+                                            stiffness: 400,
+                                            damping: 10,
+                                            ease: alohaEase as any
+                                        }}
                                     />
-                                ) : (
-                                    <>
-                                        <div className="size-8 text-primary flex items-center justify-center">
-                                            <Flame className="w-8 h-8 text-orange-500 drop-shadow-sm" />
-                                        </div>
-                                        <h2 className="text-2xl font-display tracking-wide uppercase drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]">Hula Grill & Bakery</h2>
-                                    </>
                                 )}
                             </motion.div>
                         </Link>
@@ -125,8 +100,8 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle }: NewNavbarProps) {
                                         href={link.href}
                                         className={`relative px-5 py-2.5 rounded-xl text-base font-poppins font-semibold tracking-wide uppercase transition-all duration-200 group
                                             ${active
-                                                ? "text-[#1C5F56] bg-white shadow-[0_2px_8px_-2px_rgba(0,0,0,0.1),inset_0_1px_0_0_rgba(255,255,255,1)] ring-1 ring-black/5"
-                                                : "text-[#3A2F2B] hover:text-[#1C5F56] hover:bg-white/60 hover:shadow-sm"
+                                                ? "text-buddas-teal-dark bg-white shadow-[0_2px_8px_-2px_rgba(0,0,0,0.1),inset_0_1px_0_0_rgba(255,255,255,1)] ring-1 ring-black/5"
+                                                : "text-buddas-brown hover:text-buddas-teal-dark hover:bg-white/60 hover:shadow-sm"
                                             }
                                         `}
                                     >
@@ -135,8 +110,13 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle }: NewNavbarProps) {
                                             {active && (
                                                 <motion.div
                                                     layoutId="active-dot"
-                                                    className="w-1.5 h-1.5 rounded-full bg-[#54BFA5]"
-                                                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                                    className="w-1.5 h-1.5 rounded-full bg-buddas-teal"
+                                                    transition={{
+                                                        type: "spring",
+                                                        stiffness: 500,
+                                                        damping: 30,
+                                                        ease: alohaEase as any
+                                                    }}
                                                 />
                                             )}
                                         </span>
@@ -147,25 +127,20 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle }: NewNavbarProps) {
 
                         <div className="h-8 w-px bg-stone-300 dark:bg-stone-700 mx-2" />
 
-                        <MotionLink
-                            href={orderUrl || defaultOrderUrl}
-                            target="_blank"
-                            className={`flex items-center justify-center rounded-xl h-12 px-8 text-sm font-poppins uppercase font-bold tracking-wide transition-all 
-                                shadow-[0_4px_0_0_#BC9D40,0_8px_20px_-4px_rgba(233,197,89,0.4)]
-                                active:shadow-[0_0_0_0_#BC9D40,inset_0_2px_4px_rgba(0,0,0,0.2)]
-                                active:translate-y-1
-                                hover:translate-y-[-2px] hover:shadow-[0_6px_0_0_#1C5F56,0_12px_24px_-4px_rgba(28,95,86,0.5)]
-                                ${ctaClasses}
-                                border-t border-white/20
-                            `}
+                        <Button
+                            asChild
+                            variant="default"
+                            className="h-12 px-8 rounded-xl text-sm font-bold uppercase tracking-wide shadow-lg hover:bg-buddas-teal-dark hover:shadow-teal-500/20 active:scale-95 transition-all duration-300"
                         >
-                            Order Online
-                        </MotionLink>
+                            <Link href={orderUrl || defaultOrderUrl} target="_blank">
+                                Order Online
+                            </Link>
+                        </Button>
                     </div>
 
                     {/* Mobile Menu Button */}
                     <motion.button
-                        className="md:hidden p-2 text-[#3A2F2B] dark:text-white hover:bg-[#fff8e8] rounded-md transition-colors"
+                        className="md:hidden p-2 text-buddas-brown dark:text-white hover:bg-buddas-cream rounded-md transition-colors"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         whileTap={{ scale: 0.9 }}
                     >
@@ -200,7 +175,7 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle }: NewNavbarProps) {
             <AnimatePresence>
                 {isMobileMenuOpen && (
                     <motion.div
-                        className="md:hidden fixed inset-x-0 top-[88px] bg-[#fff8e8] dark:bg-zinc-900 border-t border-white/50 dark:border-white/10 p-4 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] overflow-hidden"
+                        className="md:hidden fixed inset-x-0 top-[88px] bg-buddas-cream dark:bg-zinc-900 border-t border-white/50 dark:border-white/10 p-4 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] overflow-hidden"
                         initial="closed"
                         animate="open"
                         exit="closed"
@@ -213,8 +188,8 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle }: NewNavbarProps) {
                                     href={link.href}
                                     className={`text-lg font-poppins tracking-wide uppercase transition-all py-4 px-6 rounded-2xl block border flex items-center justify-between group
                                         ${isActive(link.href)
-                                            ? "bg-white border-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] text-[#1C5F56] font-bold"
-                                            : "border-transparent bg-white/40 text-[#3A2F2B] hover:bg-white/80 hover:shadow-sm hover:translate-x-1 font-medium"}
+                                            ? "bg-white border-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] text-buddas-teal-dark font-bold"
+                                            : "border-transparent bg-white/40 text-buddas-brown hover:bg-white/80 hover:shadow-sm hover:translate-x-1 font-medium"}
                                     `}
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     variants={itemVariants}
@@ -222,25 +197,20 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle }: NewNavbarProps) {
                                 >
                                     {link.label}
                                     {isActive(link.href) && (
-                                        <div className="w-2 h-2 rounded-full bg-[#1C5F56]" />
+                                        <div className="w-2 h-2 rounded-full bg-buddas-teal-dark" />
                                     )}
                                 </MotionLink>
                             ))}
                             <motion.div className="pt-6 pb-4" variants={itemVariants}>
-                                <MotionLink
-                                    href={orderUrl || defaultOrderUrl}
-                                    target="_blank"
-                                    className={`flex items-center justify-center rounded-2xl h-14 w-full text-lg font-poppins uppercase font-bold tracking-wider transition-all 
-                                        shadow-[0_4px_0_0_#BC9D40,0_8px_20px_-4px_rgba(233,197,89,0.4)]
-                                        active:shadow-[0_0_0_0_#BC9D40,inset_0_2px_4px_rgba(0,0,0,0.2)]
-                                        active:translate-y-1
-                                        ${ctaClasses} border-t border-white/20`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
+                                <Button
+                                    asChild
+                                    variant="default"
+                                    className="h-14 w-full rounded-2xl text-lg font-bold uppercase tracking-wider shadow-lg hover:bg-buddas-teal-dark hover:shadow-teal-500/20"
                                 >
-                                    Order Online
-                                </MotionLink>
+                                    <Link href={orderUrl || defaultOrderUrl} target="_blank" onClick={() => setIsMobileMenuOpen(false)}>
+                                        Order Online
+                                    </Link>
+                                </Button>
                             </motion.div>
                         </nav>
                     </motion.div>

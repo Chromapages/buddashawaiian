@@ -20,6 +20,9 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
+import { MICROCOPY } from "@/lib/microcopy";
+import { Button } from "@/components/ui/button";
 
 interface ContactClientProps {
     primaryLocation: any;
@@ -47,15 +50,15 @@ export function ContactClient({ primaryLocation }: ContactClientProps) {
                     <div className="absolute inset-0 bg-buddas-dark/50"></div>
                 </div>
 
-                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-700 mt-10">
+                <AnimatedSection className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white space-y-4 mt-10">
                     <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight font-poppins drop-shadow-md">
                         Let's Plan Your <br />
-                        <span className="text-buddas-orange italic font-serif drop-shadow-sm">Perfect Event</span>
+                        <span className="text-buddas-teal italic font-serif drop-shadow-sm">Perfect Event</span>
                     </h1>
                     <p className="text-lg md:text-xl text-white/90 max-w-xl mx-auto font-light drop-shadow-sm">
                         Have a question or want to book our catering services? We're here to help you create unforgettable culinary memories.
                     </p>
-                </div>
+                </AnimatedSection>
             </header>
 
             {/* Main Content Card */}
@@ -63,8 +66,7 @@ export function ContactClient({ primaryLocation }: ContactClientProps) {
                 <div className="max-w-7xl mx-auto bg-white rounded-[2.5rem] shadow-2xl shadow-zinc-900/5 border border-zinc-100 overflow-hidden">
                     <div className="flex flex-col lg:flex-row">
 
-                        {/* Contact Form Section */}
-                        <div className="w-full lg:w-3/5 p-8 md:p-12 lg:p-16">
+                        <AnimatedSection delay={100} className="w-full lg:w-3/5 p-8 md:p-12 lg:p-16">
                             <div className="mb-10">
                                 <h2 className="text-3xl font-bold text-buddas-dark tracking-tight mb-2 font-poppins">Send us a message</h2>
                                 <p className="text-zinc-500">Fill out the form below and we'll get back to you within 24 hours.</p>
@@ -169,15 +171,17 @@ export function ContactClient({ primaryLocation }: ContactClientProps) {
                                     </p>
                                 </div>
 
-                                <button type="submit" className="w-full py-4 bg-buddas-dark hover:bg-zinc-800 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 group shadow-[0_4px_0_0_rgba(0,0,0,0.5),0_8px_15px_-4px_rgba(0,0,0,0.3)] hover:translate-y-[-2px] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.5),0_12px_24px_-4px_rgba(0,0,0,0.4)] active:translate-y-1 active:shadow-[0_0_0_0_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(0,0,0,0.5)]">
-                                    Send Request
-                                    <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                                </button>
+                                <Button
+                                    type="submit"
+                                    className="w-full py-6 rounded-xl text-base font-bold uppercase tracking-wide shadow-lg hover:shadow-xl hover:translate-y-[-2px] hover:bg-black/90 active:scale-95 transition-all"
+                                >
+                                    {MICROCOPY.sendRequest || "Send Request"}
+                                    <Send className="w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                </Button>
                             </form>
-                        </div>
+                        </AnimatedSection>
 
-                        {/* Info Sidebar */}
-                        <div className="w-full lg:w-2/5 bg-zinc-50 border-t lg:border-t-0 lg:border-l border-zinc-100 p-8 md:p-12 relative overflow-hidden">
+                        <AnimatedSection delay={200} direction="left" className="w-full lg:w-2/5 bg-zinc-50 border-t lg:border-t-0 lg:border-l border-zinc-100 p-8 md:p-12 relative overflow-hidden">
                             {/* Decorative Pattern */}
                             <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-orange-200/20 rounded-full blur-3xl"></div>
                             <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-zinc-200/40 rounded-full blur-3xl"></div>
@@ -185,20 +189,24 @@ export function ContactClient({ primaryLocation }: ContactClientProps) {
                             <div className="relative z-10 h-full flex flex-col justify-between space-y-12">
                                 <div>
                                     <h3 className="text-xl font-bold text-buddas-dark mb-6 flex items-center gap-2 font-poppins">
-                                        <MapPin className="text-buddas-orange w-6 h-6" />
+                                        <MapPin className="text-buddas-dark w-6 h-6" />
                                         Visit Our Kitchen
                                     </h3>
 
-                                    {/* Custom Map Card */}
+                                    {/* Google Maps Embed */}
                                     <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-sm border border-zinc-200 group mb-8">
-                                        <Image
-                                            src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=800&auto=format&fit=crop"
-                                            alt="Location Map"
-                                            fill
-                                            className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
-                                        />
-                                        <div className="absolute inset-0 bg-buddas-dark/10 group-hover:bg-buddas-dark/0 transition-colors"></div>
-                                        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 shadow-sm flex items-center gap-1">
+                                        <iframe
+                                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3040.4371424638875!2d-111.7366577!3d40.3548305!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x874d853ad86df1af%3A0x2c17a0f9a8aad114!2sBudda&#39;s%20Bakery%20%26%20Breakfast!5e0!3m2!1sen!2sus!4v1765920548351!5m2!1sen!2sus"
+                                            width="100%"
+                                            height="100%"
+                                            style={{ border: 0 }}
+                                            allowFullScreen
+                                            loading="lazy"
+                                            referrerPolicy="no-referrer-when-downgrade"
+                                            className="absolute inset-0"
+                                            title="Budda's Hawaiian Location"
+                                        ></iframe>
+                                        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 shadow-sm flex items-center gap-1 pointer-events-none">
                                             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                                             Open Now
                                         </div>
@@ -262,53 +270,54 @@ export function ContactClient({ primaryLocation }: ContactClientProps) {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </AnimatedSection>
                     </div>
                 </div>
             </main>
 
-            {/* FAQ Section */}
-            <section className="py-20 px-6 max-w-4xl mx-auto w-full">
-                <div className="text-center mb-12">
-                    <span className="text-buddas-orange font-bold tracking-widest uppercase text-xs mb-3 block">Support</span>
-                    <h2 className="text-3xl font-bold text-buddas-dark tracking-tight font-poppins">Frequently Asked Questions</h2>
-                </div>
-
-                <div className="grid gap-4">
-                    {/* FAQ Item 1 */}
-                    <div className="group bg-white rounded-2xl border border-zinc-100 p-6 hover:shadow-lg hover:border-orange-100 transition-all cursor-pointer">
-                        <div className="flex justify-between items-center">
-                            <h3 className="font-semibold text-buddas-dark">How far in advance should I book?</h3>
-                            <PlusCircle className="text-zinc-400 w-6 h-6 group-hover:text-buddas-orange group-hover:rotate-45 transition-all" />
-                        </div>
-                        <p className="text-zinc-500 text-sm mt-3 leading-relaxed hidden group-hover:block animate-in fade-in duration-300">
-                            We recommend booking at least 3 months in advance for large events (weddings, galas) and 2 weeks for smaller corporate gatherings to ensure availability.
-                        </p>
+            <AnimatedSection delay={300}>
+                <section className="py-20 px-6 max-w-4xl mx-auto w-full">
+                    <div className="text-center mb-12">
+                        <span className="text-buddas-orange font-bold tracking-widest uppercase text-xs mb-3 block">Support</span>
+                        <h2 className="text-3xl font-bold text-buddas-dark tracking-tight font-poppins">Frequently Asked Questions</h2>
                     </div>
 
-                    {/* FAQ Item 2 */}
-                    <div className="group bg-white rounded-2xl border border-zinc-100 p-6 hover:shadow-lg hover:border-orange-100 transition-all cursor-pointer">
-                        <div className="flex justify-between items-center">
-                            <h3 className="font-semibold text-buddas-dark">Do you accommodate dietary restrictions?</h3>
-                            <PlusCircle className="text-zinc-400 w-6 h-6 group-hover:text-buddas-orange group-hover:rotate-45 transition-all" />
+                    <div className="grid gap-4">
+                        {/* FAQ Item 1 */}
+                        <div className="group bg-white rounded-2xl border border-zinc-100 p-6 hover:shadow-lg hover:border-orange-100 transition-all cursor-pointer">
+                            <div className="flex justify-between items-center">
+                                <h3 className="font-semibold text-buddas-dark">How far in advance should I book?</h3>
+                                <PlusCircle className="text-zinc-400 w-6 h-6 group-hover:text-buddas-orange group-hover:rotate-45 transition-all" />
+                            </div>
+                            <p className="text-zinc-500 text-sm mt-3 leading-relaxed hidden group-hover:block animate-in fade-in duration-300">
+                                We recommend booking at least 3 months in advance for large events (weddings, galas) and 2 weeks for smaller corporate gatherings to ensure availability.
+                            </p>
                         </div>
-                        <p className="text-zinc-500 text-sm mt-3 leading-relaxed hidden group-hover:block animate-in fade-in duration-300">
-                            Absolutely. Our culinary team specializes in creating delicious menus for vegan, gluten-free, keto, and kosher requirements without compromising on taste.
-                        </p>
-                    </div>
 
-                    {/* FAQ Item 3 */}
-                    <div className="group bg-white rounded-2xl border border-zinc-100 p-6 hover:shadow-lg hover:border-orange-100 transition-all cursor-pointer">
-                        <div className="flex justify-between items-center">
-                            <h3 className="font-semibold text-buddas-dark">Is there a minimum guest count?</h3>
-                            <PlusCircle className="text-zinc-400 w-6 h-6 group-hover:text-buddas-orange group-hover:rotate-45 transition-all" />
+                        {/* FAQ Item 2 */}
+                        <div className="group bg-white rounded-2xl border border-zinc-100 p-6 hover:shadow-lg hover:border-orange-100 transition-all cursor-pointer">
+                            <div className="flex justify-between items-center">
+                                <h3 className="font-semibold text-buddas-dark">Do you accommodate dietary restrictions?</h3>
+                                <PlusCircle className="text-zinc-400 w-6 h-6 group-hover:text-buddas-orange group-hover:rotate-45 transition-all" />
+                            </div>
+                            <p className="text-zinc-500 text-sm mt-3 leading-relaxed hidden group-hover:block animate-in fade-in duration-300">
+                                Absolutely. Our culinary team specializes in creating delicious menus for vegan, gluten-free, keto, and kosher requirements without compromising on taste.
+                            </p>
                         </div>
-                        <p className="text-zinc-500 text-sm mt-3 leading-relaxed hidden group-hover:block animate-in fade-in duration-300">
-                            Our minimum for full-service catering is 10 guests. For smaller private chef experiences, we can accommodate groups as small as 2.
-                        </p>
+
+                        {/* FAQ Item 3 */}
+                        <div className="group bg-white rounded-2xl border border-zinc-100 p-6 hover:shadow-lg hover:border-orange-100 transition-all cursor-pointer">
+                            <div className="flex justify-between items-center">
+                                <h3 className="font-semibold text-buddas-dark">Is there a minimum guest count?</h3>
+                                <PlusCircle className="text-zinc-400 w-6 h-6 group-hover:text-buddas-orange group-hover:rotate-45 transition-all" />
+                            </div>
+                            <p className="text-zinc-500 text-sm mt-3 leading-relaxed hidden group-hover:block animate-in fade-in duration-300">
+                                Our minimum for full-service catering is 10 guests. For smaller private chef experiences, we can accommodate groups as small as 2.
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </AnimatedSection>
         </div>
     );
 }

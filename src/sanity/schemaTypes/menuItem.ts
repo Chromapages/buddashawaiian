@@ -91,12 +91,7 @@ const menuItem = defineType({
                 }),
             ],
         }),
-        defineField({
-            name: "isSignature",
-            title: "Signature Item",
-            type: "boolean",
-            initialValue: false,
-        }),
+
         defineField({
             name: "calories",
             title: "Calories",
