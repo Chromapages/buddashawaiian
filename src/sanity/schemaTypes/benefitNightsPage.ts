@@ -2,7 +2,7 @@ import { defineType, defineField } from "sanity";
 
 const benefitNightsPage = defineType({
     name: "benefitNightsPage",
-    title: "Benefit Nights Page",
+    title: "Events & Fundraisers",
     type: "document",
     fields: [
         defineField({

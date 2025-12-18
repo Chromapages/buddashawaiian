@@ -74,7 +74,7 @@ export function NewArrivalsSlideshow({ items }: NewArrivalsSlideshowProps) {
             filter: "blur(0px)",
             transition: {
                 duration: 0.8,
-                ease: [0.2, 0.65, 0.3, 0.9] // Elegant easing
+                ease: [0.25, 0.1, 0.25, 1] // Aloha Motion Ease
             }
         }
     };
@@ -91,12 +91,12 @@ export function NewArrivalsSlideshow({ items }: NewArrivalsSlideshowProps) {
 
     return (
         <section
-            className="relative w-full min-h-[700px] md:h-[800px] bg-zinc-950 overflow-hidden text-white"
+            className="relative w-full min-h-[700px] md:h-[800px] bg-buddas-teal-dark overflow-hidden text-white"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
-            {/* Background Elements (Noise Texture for Detail) */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none z-10"></div>
+            {/* Background Elements (Subtle Pattern) */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none z-10 mix-blend-overlay"></div>
 
             <AnimatePresence mode="wait">
                 <div key={currentIndex} className="w-full h-full flex flex-col md:flex-row relative z-0">
@@ -119,14 +119,14 @@ export function NewArrivalsSlideshow({ items }: NewArrivalsSlideshowProps) {
                     </div>
 
                     {/* RIGHT: CONTENT SECTION (50%) */}
-                    <div className="w-full md:w-1/2 h-full flex flex-col justify-center px-6 md:px-20 lg:px-24 py-12 bg-zinc-950 relative">
+                    <div className="w-full md:w-1/2 h-full flex flex-col justify-center px-6 md:px-20 lg:px-24 py-12 bg-buddas-teal-dark relative">
 
                         {/* Floating Nav Arrows (Desktop) */}
                         <div className="absolute top-1/2 -translate-y-1/2 right-8 hidden 2xl:flex flex-col gap-4 z-30">
-                            <button onClick={handlePrev} className="p-4 rounded-full border border-white/10 text-white/50 hover:bg-white hover:text-black transition-all hover:scale-110 active:scale-95">
+                            <button onClick={handlePrev} className="p-4 rounded-full border border-white/10 text-white/50 hover:bg-white hover:text-buddas-teal-dark transition-all hover:scale-110 active:scale-95">
                                 <ChevronLeft className="w-6 h-6" />
                             </button>
-                            <button onClick={handleNext} className="p-4 rounded-full border border-white/10 text-white/50 hover:bg-white hover:text-black transition-all hover:scale-110 active:scale-95">
+                            <button onClick={handleNext} className="p-4 rounded-full border border-white/10 text-white/50 hover:bg-white hover:text-buddas-teal-dark transition-all hover:scale-110 active:scale-95">
                                 <ChevronRight className="w-6 h-6" />
                             </button>
                         </div>
@@ -150,29 +150,29 @@ export function NewArrivalsSlideshow({ items }: NewArrivalsSlideshowProps) {
                             </motion.div>
 
                             {/* Title */}
-                            <motion.h2 variants={textItemVariants} className="text-4xl md:text-6xl lg:text-7xl font-bold font-poppins leading-[1.1] mb-6 text-white tracking-tight">
+                            <motion.h2 variants={textItemVariants} className="text-4xl md:text-6xl lg:text-7xl font-semibold font-poppins leading-[1.1] mb-6 text-white tracking-tight">
                                 {currentSlide.name}
                             </motion.h2>
 
                             {/* Description */}
-                            <motion.p variants={textItemVariants} className="text-lg md:text-xl text-zinc-400 leading-relaxed mb-12 max-w-lg font-dm-sans">
+                            <motion.p variants={textItemVariants} className="text-lg md:text-xl text-buddas-cream/80 leading-relaxed mb-12 max-w-lg font-dm-sans">
                                 {currentSlide.description || "Experience the bold flavors of Hawaii with our newest kitchen creation. Fresh, fiery, and full of aloha."}
                             </motion.p>
 
                             {/* Price & CTA Block */}
                             <motion.div variants={textItemVariants} className="flex flex-col sm:flex-row items-start sm:items-center gap-8">
                                 <div className="flex flex-col">
-                                    <span className="text-xs text-zinc-500 font-bold uppercase tracking-widest mb-2">Price</span>
-                                    <span className="text-5xl font-bold text-white font-['Google_Sans_Flex'] tracking-tight">
+                                    <span className="text-xs text-buddas-cream/60 font-bold uppercase tracking-widest mb-2">Price</span>
+                                    <span className="text-5xl font-medium text-buddas-gold font-poppins tracking-tight">
                                         {formatPrice(currentSlide.price)}
                                     </span>
                                 </div>
-                                <div className="h-12 w-px bg-zinc-800 hidden sm:block"></div>
-                                <button className="group relative px-10 py-5 bg-white text-black rounded-2xl font-bold text-sm uppercase tracking-widest overflow-hidden hover:scale-105 active:scale-95 transition-transform duration-300 shadow-xl shadow-white/5">
+                                <div className="h-12 w-px bg-white/10 hidden sm:block"></div>
+                                <button className="group relative px-10 py-5 bg-buddas-gold text-buddas-brown rounded-lg font-bold text-sm uppercase tracking-widest overflow-hidden hover:scale-105 active:scale-95 transition-transform duration-300 shadow-sm hover:shadow-md">
                                     <span className="relative z-10 flex items-center gap-3">
                                         {MICROCOPY.tasteItFirst} <ArrowRight className="w-4 h-4" />
                                     </span>
-                                    <div className="absolute inset-0 bg-buddas-gold transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500 ease-out"></div>
+                                    <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500 ease-out"></div>
                                 </button>
                             </motion.div>
 

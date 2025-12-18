@@ -1,34 +1,46 @@
 import { defineType, defineField } from "sanity";
+import { Megaphone } from "lucide-react";
 
 const promotion = defineType({
     name: "promotion",
     title: "Promotion",
+    icon: Megaphone,
     type: "document",
     fields: [
         defineField({
             name: "title",
             title: "Title",
             type: "string",
-            validation: (Rule) => Rule.required(),
+            validation: (Rule) => Rule.required().max(40).warning("Keep titles punchy (max 40 chars)."),
             description: "e.g. 'Lunch Rush Special', 'Double Points Day'",
         }),
         defineField({
             name: "badge",
             title: "Badge Text",
             type: "string",
-            description: "e.g. 'EXPIRES IN 2H', 'REWARDS MEMBER', 'NEW ARRIVAL'",
+            validation: (Rule) => Rule.max(20).warning("Badges must be short (max 20 chars)."),
+            description: "e.g. 'EXPIRES IN 2H', 'REWARDS MEMBER'",
         }),
         defineField({
             name: "description",
             title: "Description",
             type: "string",
+            validation: (Rule) => Rule.max(90).warning("Keep descriptions to 1-2 lines (max 90 chars)."),
             description: "Short promo description",
         }),
         defineField({
+            name: "image",
+            title: "Promo Image",
+            type: "image",
+            options: {
+                hotspot: true,
+            },
+        }),
+        defineField({
             name: "promoCode",
-            title: "Promo Code (Optional)",
+            title: "Global Promo Code (Optional)",
             type: "string",
-            description: "e.g. 'ALOHA20'",
+            description: "e.g. 'WEB20'. For tracked tracking (IG20, FB20), create separate records or use the description to guide staff (ROAS).",
         }),
         defineField({
             name: "ctaLabel",
@@ -48,12 +60,26 @@ const promotion = defineType({
             type: "string",
             options: {
                 list: [
-                    { title: "Red (Urgency)", value: "red" },
-                    { title: "Teal (Loyalty)", value: "teal" },
-                    { title: "Amber (New Item)", value: "amber" },
+                    { title: "Sunset Orange (Urgency/Limited)", value: "orange" },
+                    { title: "Base Teal (Loyalty/Standard)", value: "teal" },
+                    { title: "Island Gold (New/Value)", value: "gold" },
+                    { title: "Cocoa Brown (Community/News)", value: "brown" },
                 ],
             },
-            initialValue: "red",
+            initialValue: "teal",
+        }),
+        defineField({
+            name: "campaignType",
+            title: "Campaign Goal",
+            type: "string",
+            options: {
+                list: [
+                    { title: "Conversion (Hard Sell - BOGO/%)", value: "conversion" },
+                    { title: "Crave (Food Focus)", value: "crave" },
+                    { title: "Community (Events/News)", value: "community" },
+                ]
+            },
+            initialValue: "conversion"
         }),
         defineField({
             name: "icon",

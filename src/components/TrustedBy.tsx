@@ -23,9 +23,11 @@ export function TrustedBy({ trustedByData }: TrustedByProps) {
     ];
 
     return (
-        <section className="pt-8 pb-8 md:pb-10 bg-[#FAF2D8] border-b border-[#e8dcc0]">
+        <section className="pt-8 pb-8 md:pb-10 bg-buddas-cream border-b border-buddas-brown/5">
             <div className="max-w-[1280px] xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-6 lg:px-8 xl:px-12 2xl:px-16 text-center">
-                <p className="text-[#145B57] font-bold mb-12 text-lg tracking-[0.1em] uppercase drop-shadow-sm">{title}</p>
+                <h2 className="text-buddas-brown font-[family-name:var(--font-poppins)] font-semibold mb-12 text-2xl tracking-[-0.01em] drop-shadow-sm">
+                    {title}
+                </h2>
                 <div className="flex flex-wrap justify-center items-center gap-12 lg:gap-24">
                     {platforms.map((platform, index) => (
                         <Link
@@ -33,7 +35,7 @@ export function TrustedBy({ trustedByData }: TrustedByProps) {
                             href={platform.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="opacity-80 hover:opacity-100 hover:scale-110 hover:-translate-y-1 hover:drop-shadow-md transition-all duration-300 ease-out group"
+                            className="transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] hover:scale-105 group"
                         >
                             {platform.logo ? (
                                 <div className="relative h-16 w-auto min-w-[160px]">
@@ -41,12 +43,11 @@ export function TrustedBy({ trustedByData }: TrustedByProps) {
                                         src={platform.logo}
                                         alt={platform.name || "Platform logo"}
                                         fill
-                                        className="object-contain transition-all duration-300 grayscale"
-                                        style={{ filter: 'brightness(0) saturate(100%) invert(13%) sepia(5%) saturate(384%) hue-rotate(314deg) brightness(98%) contrast(89%)' }}
+                                        className="object-contain transition-all duration-300 opacity-60 grayscale hover:opacity-100 hover:grayscale-0"
                                     />
                                 </div>
                             ) : (
-                                <span className="text-4xl font-black tracking-tight text-[#2B2B2B] transition-colors">
+                                <span className="text-4xl font-black tracking-tight text-buddas-brown/40 hover:text-buddas-teal transition-colors duration-300">
                                     {platform.name}
                                 </span>
                             )}

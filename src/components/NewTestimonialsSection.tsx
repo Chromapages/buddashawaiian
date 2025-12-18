@@ -11,6 +11,8 @@ interface Testimonial {
     quote: string;
     rating?: number;
     source?: string;
+    avatar?: string;
+    date?: string;
 }
 
 interface NewTestimonialsSectionProps {
@@ -126,7 +128,7 @@ export function NewTestimonialsSection({ testimonials = [] }: NewTestimonialsSec
     };
 
     return (
-        <section id="testimonials" className="py-12 md:py-20 bg-white relative">
+        <section id="testimonials" className="py-12 md:py-20 bg-buddas-cream relative">
             <div className="max-w-[1280px] xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16"
                 onMouseEnter={() => setIsPaused(true)}
                 onMouseLeave={() => setIsPaused(false)}
@@ -135,27 +137,27 @@ export function NewTestimonialsSection({ testimonials = [] }: NewTestimonialsSec
                 {/* Section Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-16 px-2">
                     <div className="space-y-3">
-                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-buddas-orange/10 text-buddas-orange text-xs font-bold uppercase tracking-widest border border-buddas-orange/20">
+                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-buddas-gold/10 text-buddas-gold-dark text-xs font-bold uppercase tracking-widest border border-buddas-gold/20 font-dm-sans">
                             Community Love
                         </span>
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-poppins font-bold text-buddas-brown leading-[0.9] tracking-tight">
                             Talk of the Town
                         </h2>
-                        <p className="text-buddas-brown/70 font-['Google_Sans_Flex'] text-lg">See what our locals are saying.</p>
+                        <p className="text-buddas-brown/70 font-dm-sans text-lg">See what our locals are saying.</p>
                     </div>
 
                     {/* Carousel Controls */}
                     <div className="flex gap-2 hidden md:flex">
                         <button
                             onClick={prevSlide}
-                            className="size-12 rounded-full border border-zinc-200 bg-white hover:bg-zinc-50 flex items-center justify-center transition-colors shadow-sm text-zinc-600 active:scale-95"
+                            className="size-12 rounded-full border border-buddas-brown/10 bg-transparent hover:bg-buddas-brown/5 flex items-center justify-center transition-colors shadow-sm text-buddas-brown active:scale-95"
                             aria-label="Previous testimonial"
                         >
                             <ChevronLeft className="w-6 h-6" />
                         </button>
                         <button
                             onClick={nextSlide}
-                            className="size-12 rounded-full bg-zinc-900 text-white hover:bg-zinc-800 flex items-center justify-center transition-colors shadow-lg active:scale-95"
+                            className="size-12 rounded-full bg-buddas-teal text-white hover:bg-buddas-teal-light flex items-center justify-center transition-colors shadow-lg active:scale-95"
                             aria-label="Next testimonial"
                         >
                             <ChevronRight className="w-6 h-6" />
@@ -167,7 +169,7 @@ export function NewTestimonialsSection({ testimonials = [] }: NewTestimonialsSec
                 <div className="flex justify-end mb-8 px-2">
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="inline-flex items-center gap-2 text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors bg-teal-50 hover:bg-teal-100 px-4 py-2 rounded-full"
+                        className="inline-flex items-center gap-2 text-sm font-medium text-buddas-teal hover:text-white transition-colors border border-buddas-teal bg-transparent hover:bg-buddas-teal px-4 py-2 rounded-lg font-dm-sans"
                     >
                         <Plus className="w-4 h-4" />
                         Write a Review
@@ -187,13 +189,13 @@ export function NewTestimonialsSection({ testimonials = [] }: NewTestimonialsSec
 
             {/* Write Review Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-buddas-brown/60 backdrop-blur-sm animate-in fade-in duration-200 font-dm-sans">
                     <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
                         <div className="flex items-center justify-between p-6 border-b border-zinc-100">
-                            <h3 className="text-xl font-semibold text-zinc-900">Write a Review</h3>
+                            <h3 className="text-xl font-semibold text-buddas-brown font-poppins">Write a Review</h3>
                             <button
                                 onClick={() => setIsModalOpen(false)}
-                                className="text-zinc-400 hover:text-zinc-600 transition-colors"
+                                className="text-zinc-400 hover:text-buddas-brown transition-colors"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -204,34 +206,34 @@ export function NewTestimonialsSection({ testimonials = [] }: NewTestimonialsSec
                                 <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <Check className="w-8 h-8" />
                                 </div>
-                                <h4 className="text-xl font-semibold text-zinc-900 mb-2">Mahalo!</h4>
-                                <p className="text-zinc-500">Your review has been submitted for approval.</p>
+                                <h4 className="text-xl font-semibold text-buddas-brown mb-2 font-poppins">Mahalo!</h4>
+                                <p className="text-buddas-brown/70">Your review has been submitted for approval.</p>
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit} className="p-6 space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-zinc-700 mb-1">Your Name</label>
+                                    <label className="block text-sm font-medium text-buddas-brown mb-1">Your Name</label>
                                     <input
                                         type="text"
                                         required
-                                        className="w-full px-4 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                                        className="w-full px-4 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-buddas-teal/20 focus:border-buddas-teal transition-all text-buddas-brown"
                                         value={formData.name}
                                         onChange={e => setFormData({ ...formData, name: e.target.value })}
                                         placeholder="John Doe"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-zinc-700 mb-1">Role or Location (Optional)</label>
+                                    <label className="block text-sm font-medium text-buddas-brown mb-1">Role or Location (Optional)</label>
                                     <input
                                         type="text"
-                                        className="w-full px-4 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                                        className="w-full px-4 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-buddas-teal/20 focus:border-buddas-teal transition-all text-buddas-brown"
                                         value={formData.location}
                                         onChange={e => setFormData({ ...formData, location: e.target.value })}
                                         placeholder="e.g. Local Guide"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-zinc-700 mb-1">Rating</label>
+                                    <label className="block text-sm font-medium text-buddas-brown mb-1">Rating</label>
                                     <div className="flex gap-2">
                                         {[1, 2, 3, 4, 5].map((star) => (
                                             <button
@@ -241,18 +243,18 @@ export function NewTestimonialsSection({ testimonials = [] }: NewTestimonialsSec
                                                 className="focus:outline-none transition-transform hover:scale-110 active:scale-95"
                                             >
                                                 <Star
-                                                    className={`w-8 h-8 ${formData.rating >= star ? 'fill-teal-500 text-teal-500' : 'text-zinc-300'}`}
+                                                    className={`w-8 h-8 ${formData.rating >= star ? 'fill-buddas-gold text-buddas-gold' : 'text-zinc-300'}`}
                                                 />
                                             </button>
                                         ))}
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-zinc-700 mb-1">Your Review</label>
+                                    <label className="block text-sm font-medium text-buddas-brown mb-1">Your Review</label>
                                     <textarea
                                         required
                                         rows={4}
-                                        className="w-full px-4 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all resize-none"
+                                        className="w-full px-4 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-buddas-teal/20 focus:border-buddas-teal transition-all resize-none text-buddas-brown"
                                         value={formData.quote}
                                         onChange={e => setFormData({ ...formData, quote: e.target.value })}
                                         placeholder="Tell us about your experience..."
@@ -269,7 +271,7 @@ export function NewTestimonialsSection({ testimonials = [] }: NewTestimonialsSec
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="w-full bg-teal-600 hover:bg-teal-500 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                        className="w-full bg-buddas-teal hover:bg-buddas-teal-dark text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                     >
                                         {isSubmitting ? (
                                             <>
@@ -299,71 +301,82 @@ function TestimonialCard({ item }: { item: Testimonial }) {
 
     return (
         <>
-            <div className="bg-zinc-50 rounded-2xl p-8 border border-zinc-100 relative group hover:border-teal-200 hover:shadow-lg hover:shadow-teal-500/5 transition-all duration-300 flex flex-col h-full">
-                <div className="absolute top-8 right-8 text-teal-200 group-hover:text-teal-100 transition-colors">
-                    <Quote className="w-12 h-12 fill-current opacity-20" />
+            <div className="bg-white rounded-3xl p-8 border border-buddas-brown/5 relative group hover:border-buddas-gold/40 hover:shadow-lg hover:shadow-buddas-gold/10 transition-all duration-300 flex flex-col h-full font-dm-sans">
+                <div className="absolute top-8 right-8 text-buddas-gold/20 group-hover:text-buddas-gold/40 transition-colors">
+                    <Quote className="w-12 h-12 fill-current opacity-100" />
                 </div>
-                <div className="flex gap-1 text-teal-500 mb-4">
+                <div className="flex gap-1 text-buddas-gold mb-4">
                     {[...Array(5)].map((_, i) => (
                         <Star
                             key={i}
-                            className={`w-5 h-5 ${i < Math.floor(item.rating || 5) ? 'fill-current' : 'text-teal-200'}`}
+                            className={`w-5 h-5 ${i < Math.floor(item.rating || 5) ? 'fill-current' : 'text-buddas-gold/30'}`}
                         />
                     ))}
                 </div>
                 <div className="relative z-10 flex-grow mb-6">
-                    <p className="text-zinc-700 text-lg leading-relaxed">
+                    <p className="text-buddas-brown text-lg leading-relaxed">
                         "{displayQuote}"
                     </p>
                     {isLong && (
                         <button
                             onClick={() => setIsReadMoreOpen(true)}
-                            className="mt-2 text-sm font-medium text-teal-600 hover:text-teal-700 underline underline-offset-2 decoration-teal-200 hover:decoration-teal-500 transition-all"
+                            className="mt-2 text-sm font-medium text-buddas-teal hover:text-buddas-teal-dark underline underline-offset-2 decoration-buddas-teal/30 hover:decoration-buddas-teal transition-all"
                         >
                             Read full review
                         </button>
                     )}
                 </div>
 
-                <div className="flex items-center gap-4 pt-4 border-t border-zinc-200/50">
+                <div className="flex items-center gap-4 pt-4 border-t border-buddas-brown/5">
+                    {/* Avatar if exists */}
+                    {item.avatar && (
+                        <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                            <Image src={item.avatar} alt={item.name} fill className="object-cover" />
+                        </div>
+                    )}
                     <div>
-                        <div className="font-semibold text-zinc-900">{item.name}</div>
-                        <div className="text-xs text-zinc-500">{item.roleOrLocation || "Verified Review"}</div>
+                        <div className="font-bold text-buddas-brown">{item.name}</div>
+                        <div className="text-xs text-buddas-brown/60 uppercase tracking-wide font-medium">{item.roleOrLocation || "Verified Review"}</div>
                     </div>
                 </div>
             </div>
 
             {/* Read More Modal */}
             {isReadMoreOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-buddas-brown/60 backdrop-blur-sm animate-in fade-in duration-200 font-dm-sans">
                     <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200 relative">
                         <button
                             onClick={() => setIsReadMoreOpen(false)}
-                            className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600 transition-colors p-2 bg-zinc-50 hover:bg-zinc-100 rounded-full"
+                            className="absolute top-4 right-4 text-zinc-400 hover:text-buddas-brown transition-colors p-2 bg-zinc-50 hover:bg-zinc-100 rounded-full"
                         >
                             <X className="w-5 h-5" />
                         </button>
 
                         <div className="p-8 md:p-10">
-                            <div className="flex gap-1 text-teal-500 mb-6">
+                            <div className="flex gap-1 text-buddas-gold mb-6">
                                 {[...Array(5)].map((_, i) => (
                                     <Star
                                         key={i}
-                                        className={`w-6 h-6 ${i < Math.floor(item.rating || 5) ? 'fill-current' : 'text-teal-200'}`}
+                                        className={`w-6 h-6 ${i < Math.floor(item.rating || 5) ? 'fill-current' : 'text-buddas-gold/30'}`}
                                     />
                                 ))}
                             </div>
 
-                            <Quote className="w-10 h-10 text-teal-200 fill-current mb-4" />
+                            <Quote className="w-10 h-10 text-buddas-gold/40 fill-current mb-4" />
 
-                            <p className="text-zinc-800 text-xl leading-relaxed mb-8">
+                            <p className="text-buddas-brown text-xl leading-relaxed mb-8">
                                 "{item.quote}"
                             </p>
 
                             <div className="flex items-center gap-4">
+                                {item.avatar && (
+                                    <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                        <Image src={item.avatar} alt={item.name} fill className="object-cover" />
+                                    </div>
+                                )}
                                 <div>
-                                    <div className="font-bold text-zinc-900 text-lg">{item.name}</div>
-                                    <div className="text-sm text-zinc-500">{item.roleOrLocation || "Verified Review"}</div>
+                                    <div className="font-bold text-buddas-brown text-lg">{item.name}</div>
+                                    <div className="text-sm text-buddas-brown/60 uppercase tracking-wide">{item.roleOrLocation || "Verified Review"}</div>
                                 </div>
                             </div>
                         </div>

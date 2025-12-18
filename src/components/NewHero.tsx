@@ -29,7 +29,10 @@ export function NewHero({ heroSlides }: NewHeroProps) {
     const getHeroImageSrc = (): string => {
         // Check if we have a direct URL from expanded asset
         if (slide?.image?.asset?.url) {
-            return slide.image.asset.url;
+            // Append Sanity CDN parameters for optimized delivery
+            // This prevents timeouts with large images by resizing and converting format
+            const baseUrl = slide.image.asset.url;
+            return `${baseUrl}?w=1920&q=80&auto=format`;
         }
         // Fallback to Unsplash
         return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=1200";
@@ -45,7 +48,7 @@ export function NewHero({ heroSlides }: NewHeroProps) {
             <div className="absolute inset-0 z-0 select-none">
                 <Image
                     src={mainImageSrc}
-                    alt="Background"
+                    alt={slide?.image?.alt || "Buddas Hawaiian hero background - island comfort food"}
                     fill
                     className="object-cover opacity-90"
                     priority
@@ -58,20 +61,26 @@ export function NewHero({ heroSlides }: NewHeroProps) {
             <div className="relative z-10 w-full max-w-[1280px] xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-36 pb-32 md:pb-48 md:pt-44 lg:pt-48 grid lg:grid-cols-2 gap-12 2xl:gap-16 items-center">
 
                 {/* Left Column: Text */}
-                <div className="space-y-8 max-w-2xl 2xl:max-w-3xl animate-in slide-in-from-bottom-8 fade-in duration-700 ease-[var(--ease-aloha)]">
-                    <h1 className="text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl font-semibold text-white tracking-tight leading-[1.1] drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] font-[family-name:var(--font-poppins)]">
+                <div className="space-y-8 max-w-2xl 2xl:max-w-3xl">
+                    {/* Badge (Brand Guidelines: Display above headline) */}
+                    {heroBadge && (
+                        <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-buddas-gold/20 text-buddas-gold text-sm font-medium border border-buddas-gold/30 backdrop-blur-sm animate-in fade-in duration-300 delay-100">
+                            {heroBadge}
+                        </span>
+                    )}
+                    <h1 className="text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl font-semibold text-white tracking-[-0.02em] leading-[1.1] drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] font-[family-name:var(--font-poppins)] animate-in slide-in-from-bottom-8 fade-in duration-300 delay-200">
                         {heroTitle}
                     </h1>
-                    <p className="text-xl md:text-2xl 2xl:text-3xl text-white/90 font-medium leading-relaxed max-w-lg 2xl:max-w-2xl opacity-95 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
+                    <p className="text-xl md:text-2xl 2xl:text-3xl text-white/90 font-medium leading-relaxed max-w-lg 2xl:max-w-2xl opacity-95 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom-6 fade-in duration-300 delay-300">
                         {heroSubtitle}
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                    <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-in slide-in-from-bottom-4 fade-in duration-300 delay-400">
                         <Button
                             asChild
                             variant="default" // Teal Primary
                             size="xl"
-                            className="rounded-xl shadow-lg hover:shadow-teal-500/20 hover:bg-buddas-teal-dark"
+                            className="rounded-lg shadow-lg hover:shadow-teal-500/20 hover:bg-buddas-teal-dark"
                         >
                             <Link href={primaryCtaLink}>
                                 <span>{primaryCtaLabel || MICROCOPY.orderNow}</span>
@@ -87,7 +96,7 @@ export function NewHero({ heroSlides }: NewHeroProps) {
                             asChild
                             variant="outline" // Glass/Outline style (Exception for Hero contrast)
                             size="xl"
-                            className="rounded-xl border-white/20 text-white bg-white/10 hover:bg-white/20 hover:text-white backdrop-blur-md shadow-lg"
+                            className="rounded-lg border-white/20 text-white bg-white/10 hover:bg-white/20 hover:text-white backdrop-blur-md shadow-lg"
                         >
                             <Link href={secondaryCtaLink}>
                                 <span>{secondaryCtaLabel || MICROCOPY.viewMenu}</span>
@@ -96,7 +105,7 @@ export function NewHero({ heroSlides }: NewHeroProps) {
                         </Button>
                     </div>
 
-                    <div className="flex items-center gap-4 pt-4 text-teal-100/80 text-base font-medium">
+                    <div className="flex items-center gap-4 pt-4 text-teal-100/80 text-base font-medium animate-in fade-in duration-300 delay-500">
                         <p className="drop-shadow-sm border-l-2 border-buddas-orange pl-4">{MICROCOPY.socialProof}</p>
                     </div>
                 </div>

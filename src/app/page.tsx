@@ -31,20 +31,46 @@ interface HomePageData {
   locations?: any[];
   testimonials?: any[];
   cateringData?: {
-    heroTitle?: string;
-    heroSubtitle?: string;
-    heroImage?: any;
-    introduction?: string;
-    heroCtaLabel?: string;
-    heroCtaLink?: string;
-    serviceTypes?: { title: string; description?: string; image?: any }[];
+    // Homepage Teaser Fields ONLY
+    teaserBadge?: string;
+    eventsBadge?: string;
+    communityBadge?: string;
+
+    cateringTitle?: string;
+    cateringDescription?: string;
+    cateringImage?: string;
+    cateringCtaLabel?: string;
+    cateringCtaLink?: string;
+
+    eventsTitle?: string;
+    eventsDescription?: string;
+    eventsImage?: string;
+    eventsCtaLabel?: string;
+    eventsCtaLink?: string;
+
+    communityTitle?: string;
+    communityDescription?: string;
+    communityImage?: string;
+    communityCtaLabel?: string;
+    communityCtaLink?: string;
   };
   aboutData?: {
+    teaserTitle?: string;
+    teaserSnippet?: string;
+    teaserBackgroundImage?: string;
+    stats?: { value: string; label: string }[];
     storyTitle?: string;
     storyContent?: any[];
   };
   promotions?: any[];
   trustedByData?: any;
+  ctaData?: {
+    title?: string;
+    subtitle?: string;
+    backgroundImage?: string;
+    primaryCta?: { label?: string; url?: string };
+    secondaryCta?: { label?: string; url?: string };
+  };
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -145,7 +171,7 @@ export default async function Home() {
         </AnimatedSection>
 
         <AnimatedSection delay={400}>
-          <AppDownloadCTA />
+          <AppDownloadCTA ctaData={data?.ctaData} />
         </AnimatedSection>
       </main>
 

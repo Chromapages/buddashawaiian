@@ -97,39 +97,50 @@ export const HOME_PAGE_QUERY = groq`{
     mapUrl,
     orderingUrl
   },
-  "testimonials": *[_type == "testimonial" && approved == true && spam != true] | order(_createdAt desc) [0...6] {
+  "testimonials": *[_type == "testimonial" && approved == true && spam != true] | order(date desc) [0...6] {
     _id,
     name,
     roleOrLocation,
     quote,
     rating,
     source,
-    googleReview {
-      reviewUrl,
-      foodRating,
-      serviceRating,
-      atmosphereRating
-    }
+    "avatar": avatar.asset->url,
+    date,
+    featured
   },
-  "cateringData": *[_type == "cateringPage"][0] {
-    heroTitle,
-    heroSubtitle,
-    "heroImage": heroImage.asset->url,
-    introduction,
-    heroCtaLabel,
-    heroCtaLink,
+  "cateringData": *[_type == "cateringPage"] | order(_updatedAt desc) [0] {
+    // Homepage Teaser Fields ONLY
+    teaserBadge,
+    eventsBadge,
+    communityBadge,
+
+    cateringTitle, 
+    cateringDescription,
+    "cateringImage": cateringImage.asset->url,
+    cateringCtaLabel,
+    cateringCtaLink,
+    
     eventsTitle,
     eventsDescription,
     "eventsImage": eventsImage.asset->url,
     eventsCtaLabel,
     eventsCtaLink,
-    serviceTypes[] {
-      title,
-      description,
-      "image": image.asset->url
-    }
+
+    communityTitle,
+    communityDescription,
+    "communityImage": communityImage.asset->url,
+    communityCtaLabel,
+    communityCtaLink
   },
   "aboutData": *[_type == "aboutPage"][0] {
+    teaserTitle,
+    teaserSnippet,
+    "teaserBackgroundImage": teaserBackgroundImage.asset->url,
+    stats[] {
+      value,
+      label
+    },
+    // Keep storyTitle/storyContent as fallbacks if needed
     storyTitle,
     storyContent
   },
@@ -144,6 +155,7 @@ export const HOME_PAGE_QUERY = groq`{
     "image": image.asset->url,
     ctaType,
     colorTheme,
+    campaignType,
     icon
   },
   "trustedByData": *[_type == "trustedBySection"][0] {
@@ -153,6 +165,13 @@ export const HOME_PAGE_QUERY = groq`{
       url,
       "logo": logo.asset->url
     }
+  },
+  "ctaData": *[_type == "ctaSection"][0] {
+    title,
+    subtitle,
+    "backgroundImage": backgroundImage.asset->url,
+    primaryCta,
+    secondaryCta
   }
 }`;
 

@@ -16,6 +16,7 @@ import cateringPage from "./cateringPage";
 import aboutPage from "./aboutPage";
 import promotion from "./promotion";
 import trustedBySection from './trustedBySection';
+import ctaSection from './ctaSection';
 
 export const schema: { types: SchemaTypeDefinition[] } = {
     types: [
@@ -35,5 +36,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
         heroSlide,
         promotion,
         trustedBySection,
+        ctaSection,
     ],
 }

@@ -1,9 +1,11 @@
 // sanity/schemaTypes/siteSettings.ts
 import { defineType, defineField } from "sanity";
+import { Settings } from "lucide-react";
 
 const siteSettings = defineType({
     name: "siteSettings",
     title: "Site Settings",
+    icon: Settings,
     type: "document",
     fields: [
         defineField({
@@ -16,6 +18,45 @@ const siteSettings = defineType({
             name: "tagline",
             title: "Tagline",
             type: "string",
+            validation: (Rule) => Rule.max(60).warning("Taglines should be punchy!"),
+        }),
+        // Announcement Bar
+        defineField({
+            name: "announcement",
+            title: "Announcement Bar",
+            type: "object",
+            options: { collapsible: true, collapsed: false },
+            fields: [
+                defineField({
+                    name: "isActive",
+                    title: "Active",
+                    type: "boolean",
+                    initialValue: false,
+                }),
+                defineField({
+                    name: "text",
+                    title: "Message Text",
+                    type: "string",
+                    validation: (Rule) => Rule.max(60).warning("Keep announcements short for mobile."),
+                }),
+                defineField({
+                    name: "link",
+                    title: "Link (Optional)",
+                    type: "url",
+                }),
+                defineField({
+                    name: "colorTheme",
+                    title: "Color Theme",
+                    type: "string",
+                    options: {
+                        list: [
+                            { title: "Base Teal (Info/Standard)", value: "teal" },
+                            { title: "Sunset Orange (Urgency/Closed)", value: "orange" },
+                        ],
+                    },
+                    initialValue: "teal",
+                }),
+            ],
         }),
         defineField({
             name: "favicon",

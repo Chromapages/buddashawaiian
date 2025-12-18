@@ -1,73 +1,90 @@
-import { toPlainText } from "@portabletext/react";
-import Link from "next/link";
+"use client";
 
-interface AboutData {
-    storyTitle?: string;
-    storyContent?: any[];
-}
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface NewAboutSectionProps {
-    aboutData?: AboutData;
+    aboutData?: {
+        teaserTitle?: string;
+        teaserSnippet?: string;
+        teaserBackgroundImage?: string;
+        stats?: { value: string; label: string }[];
+        storyTitle?: string;
+        storyContent?: any[];
+    };
 }
 
 export function NewAboutSection({ aboutData }: NewAboutSectionProps) {
-    // Use Sanity data with fallbacks
-    const title = aboutData?.storyTitle || "Our Roots";
-    const backgroundImage =
-        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80";
+    // Fallback content if Sanity data is missing
+    const title = aboutData?.teaserTitle || "Where Aloha Meets the Mountains";
+    const snippet = aboutData?.teaserSnippet || "Founded in 2024, Buddas brought the authentic plate lunch culture of the North Shore to the valleys of Utah. We believe in big portions, fresh ingredients, and the kind of hospitality that makes you feel like family.";
+    const stats = aboutData?.stats || [];
 
-    // Extract plain text from storyContent blocks, or use fallback
-    const fullStoryText = aboutData?.storyContent
-        ? toPlainText(aboutData.storyContent)
-        : "Founded in 2024, Budda's Hawaiian started with a simple family recipe for Kalua Pork and a dream to share the spirit of Hawaii with Utah County. Located at the base of Mount Timpanogos, we blend traditional island flavors with the mountain lifestyle of Pleasant Grove.";
+    // We can use a static fallback if no image is provided from Sanity
+    // Ideally this would be a real asset path or a robust placeholder
+    const bgImage = aboutData?.teaserBackgroundImage;
 
-    // Truncate to ~200 characters for snippet
-    const storySnippet = fullStoryText.length > 200
-        ? fullStoryText.substring(0, 200).trim() + "..."
-        : fullStoryText;
+    // Animation state
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        setIsVisible(true);
+    }, []);
 
     return (
         <section
             id="about"
-            className="relative py-24 2xl:py-32 overflow-hidden"
+            className="relative min-h-[500px] md:min-h-[600px] flex items-center justify-center bg-cover bg-center overflow-hidden"
+            style={{
+                // Dark Cocoa Brown gradient overlay for text readability
+                backgroundImage: `linear-gradient(rgba(90,58,31,0.65), rgba(90,58,31,0.75)), url(${bgImage})`,
+                backgroundColor: '#5A3A1F' // Fallback color (brand brown)
+            }}
         >
-            <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${backgroundImage})` }}
-            />
-            <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px]" />
+            <div className={`max-w-4xl mx-auto px-6 md:px-8 text-center transition-all duration-1000 ease-out transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
 
-            <div className="relative max-w-3xl 2xl:max-w-4xl mx-auto px-6 text-center">
-                <h2 className="text-3xl font-bold tracking-tight text-zinc-900 mb-6 font-[family-name:var(--font-poppins)]">{title}</h2>
-                <p className="text-lg text-zinc-600 leading-relaxed mb-6">
-                    {storySnippet}
+                {/* Heading - Poppins SemiBold, White, Text Shadow */}
+                <h2
+                    className="text-4xl md:text-5xl font-poppins font-semibold text-white mb-6 tracking-tight drop-shadow-md"
+                    style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}
+                >
+                    {title}
+                </h2>
+
+                {/* Body Text - DM Sans, Light Gray, Readable */}
+                <p className="text-lg md:text-xl text-gray-100 leading-relaxed mb-8 font-dm-sans max-w-xl mx-auto drop-shadow-sm">
+                    {snippet}
                 </p>
 
+                {/* Stats Bar (Material Style Small Cards) */}
+                {stats.length > 0 && (
+                    <div className="flex flex-wrap md:flex-nowrap justify-center gap-4 mb-10">
+                        {stats.map((stat, idx) => (
+                            <div
+                                key={idx}
+                                className="bg-white/10 backdrop-blur-none border border-white/20 px-4 py-2 rounded-xl shadow-sm min-w-[100px]"
+                            >
+                                <div className="text-xl font-poppins font-bold text-white leading-none">{stat.value}</div>
+                                <div className="text-[10px] uppercase tracking-wider text-gray-300 font-medium mt-1">{stat.label}</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* CTA Button - Material Design Elevation (Level 3) */}
                 <Link
                     href="/about"
-                    className="inline-flex items-center gap-2 text-teal-700 hover:text-teal-800 font-medium transition-colors"
+                    className="group inline-flex items-center gap-3 bg-buddas-teal text-white px-8 py-4 rounded-lg font-dm-sans font-medium text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus:outline-none focus:ring-4 focus:ring-buddas-teal/50 active:scale-95 active:shadow-md"
                 >
-                    Read More
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                    Read Our Story
+                    <ArrowRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
 
-                <div className="mt-12 flex justify-center gap-8">
-                    <div className="text-center">
-                        <div className="text-4xl font-semibold text-zinc-900 tracking-tight">10k+</div>
-                        <div className="text-sm text-zinc-500 mt-1">Plates Served</div>
-                    </div>
-                    <div className="text-center">
-                        <div className="text-4xl font-semibold text-zinc-900 tracking-tight">4.9</div>
-                        <div className="text-sm text-zinc-500 mt-1">Star Rating</div>
-                    </div>
-                    <div className="text-center">
-                        <div className="text-4xl font-semibold text-zinc-900 tracking-tight">100%</div>
-                        <div className="text-sm text-zinc-500 mt-1">Aloha Spirit</div>
-                    </div>
-                </div>
             </div>
+
+            {/* Decorative bottom fade to blend with next section (optional, adds polish) */}
+            <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
         </section>
     );
 }

@@ -1,16 +1,18 @@
 // sanity/schemaTypes/menuItem.ts
 import { defineType, defineField } from "sanity";
+import { UtensilsCrossed } from "lucide-react";
 
 const menuItem = defineType({
     name: "menuItem",
     title: "Menu Item",
+    icon: UtensilsCrossed,
     type: "document",
     fields: [
         defineField({
             name: "name",
             title: "Name",
             type: "string",
-            validation: (Rule) => Rule.required(),
+            validation: (Rule) => Rule.required().max(60).warning("Keep titles concise for menu boards."),
         }),
         defineField({
             name: "slug",
@@ -34,6 +36,8 @@ const menuItem = defineType({
             title: "Description",
             type: "text",
             rows: 3,
+            description: "Use the 'Aloha Filter': Warm, Honest, Efficient. (e.g., 'Char-grilled' instead of 'Grilled').",
+            validation: (Rule) => Rule.max(200).warning("Descriptions should be easily scannable."),
         }),
         defineField({
             name: "price",
@@ -68,11 +72,13 @@ const menuItem = defineType({
             options: {
                 layout: "tags",
                 list: [
+                    { title: "Signature (Gold Badge)", value: "signature" },
+                    { title: "Popular (Teal Badge)", value: "popular" },
                     { title: "Spicy", value: "spicy" },
                     { title: "Keiki-friendly", value: "keikiFriendly" },
-                    { title: "Popular", value: "popular" },
                     { title: "Vegetarian", value: "vegetarian" },
                     { title: "Gluten-friendly", value: "glutenFriendly" },
+                    { title: "New Arrival", value: "new" },
                 ],
             },
         }),
@@ -80,6 +86,7 @@ const menuItem = defineType({
             name: "image",
             title: "Image",
             type: "image",
+            description: "Must use 'Golden Hour' lighting. Generosity crop (fill the frame). No cold/blue tones.",
             options: { hotspot: true },
             fields: [
                 defineField({

@@ -1,9 +1,11 @@
 // sanity/schemaTypes/location.ts
 import { defineType, defineField } from "sanity";
+import { MapPin } from "lucide-react";
 
 const location = defineType({
     name: "location",
     title: "Location",
+    icon: MapPin,
     type: "document",
     fields: [
         defineField({

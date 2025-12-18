@@ -9,11 +9,14 @@ interface Promotion {
     _id: string;
     title: string;
     description: string;
+    badge?: string;
     image?: any;
     link?: string;
     buttonText?: string;
-    ctaType?: 'link' | 'coupon' | 'external'; // New optional field
-    couponCode?: string; // New optional field
+    ctaType?: 'link' | 'coupon' | 'external';
+    couponCode?: string;
+    colorTheme?: 'orange' | 'teal' | 'gold' | 'brown';
+    campaignType?: 'conversion' | 'crave' | 'community';
 }
 
 interface PromoBannerProps {
@@ -62,54 +65,105 @@ function PromoCard({ promo }: { promo: Promotion }) {
         }
     };
 
+    // Theme Mapping
+    const themeStyles = {
+        orange: {
+            badge: "bg-buddas-orange/10 text-buddas-orange border-buddas-orange/20",
+            button: "bg-buddas-orange hover:bg-buddas-orange/90 text-white",
+            accent: "bg-buddas-orange",
+            bg: "bg-orange-50/30"
+        },
+        teal: {
+            badge: "bg-buddas-teal/10 text-buddas-teal border-buddas-teal/20",
+            button: "bg-buddas-teal hover:bg-buddas-teal-dark text-white",
+            accent: "bg-buddas-teal",
+            bg: "bg-teal-50/30"
+        },
+        gold: {
+            badge: "bg-buddas-gold/20 text-buddas-gold-dark border-buddas-gold/30",
+            button: "bg-buddas-gold hover:bg-buddas-gold-dark text-buddas-brown hover:text-white",
+            accent: "bg-buddas-gold",
+            bg: "bg-amber-50/30"
+        },
+        brown: {
+            badge: "bg-buddas-brown/10 text-buddas-brown border-buddas-brown/20",
+            button: "bg-buddas-brown hover:bg-buddas-brown-dark text-white",
+            accent: "bg-buddas-brown",
+            bg: "bg-stone-50/30"
+        }
+    };
+
+    const theme = themeStyles[promo.colorTheme as keyof typeof themeStyles] || themeStyles.teal;
+
+    // Layout Logic (Campaign Type Ratios)
+    const layoutStyles = {
+        crave: {
+            imageHeight: "h-[320px]", // 60% approx, Food impact
+            contentPadding: "p-6",
+            headlineSize: "text-xl",
+            container: "h-full"
+        },
+        conversion: {
+            imageHeight: "h-[180px]", // Smaller image
+            contentPadding: "p-8", // More whitespace
+            headlineSize: "text-2xl md:text-3xl", // Big impact
+            container: "h-full"
+        },
+        community: {
+            imageHeight: "h-[240px]", // Balanced 50/50
+            contentPadding: "p-6 md:p-8",
+            headlineSize: "text-xl md:text-2xl",
+            container: "h-full"
+        }
+    };
+    // Default to 'conversion' if undefined (safe fallback)
+    const layout = layoutStyles[promo.campaignType || 'conversion'];
+
     return (
-        <div className="group flex flex-col bg-white rounded-[1.5rem] shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden h-full border border-zinc-100 relative">
+        <div className={`group flex flex-col bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-[2px] overflow-hidden border border-stone-200 relative ${theme.bg} ${layout.container}`}>
 
             {/* Image Section */}
-            <div className="relative h-[240px] w-full overflow-hidden bg-zinc-100 shrink-0">
+            <div className={`relative w-full overflow-hidden bg-zinc-100 shrink-0 ${layout.imageHeight}`}>
                 {imageUrl ? (
                     <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                         style={{ backgroundImage: `url(${imageUrl})` }}
                     ></div>
                 ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-buddas-teal/10 to-teal-50 flex items-center justify-center">
-                        <Sparkles className="w-10 h-10 text-buddas-teal/20" />
+                    <div className={`absolute inset-0 flex items-center justify-center opacity-10 ${theme.accent}`}>
+                        <Sparkles className="w-10 h-10" />
                     </div>
                 )}
 
-                {/* Floating Badge - UNIFIED GOLD THEME */}
+                {/* Floating Badge */}
                 <div className="absolute top-4 left-4 z-10">
                     <span
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm bg-amber-100/95 text-amber-800 border border-amber-200"
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm border ${theme.badge}`}
                     >
                         <Tag className="w-3 h-3" />
-                        {ctaType === 'coupon' ? 'Exclusive Code' : 'Limited Time'}
+                        {promo.badge || (ctaType === 'coupon' ? 'Exclusive Code' : 'Limited Time')}
                     </span>
                 </div>
             </div>
 
             {/* Content Section */}
-            <div className="p-6 md:p-8 flex flex-col flex-1 relative bg-white">
-                {/* Decorative border accent */}
-                <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-zinc-200 to-transparent"></div>
-
-                <h3 className="text-xl md:text-2xl font-bold text-zinc-900 font-poppins mb-3 leading-tight transition-colors">
+            <div className={`${layout.contentPadding} flex flex-col flex-1 relative`}>
+                <h3 className={`${layout.headlineSize} font-semibold text-buddas-brown font-[family-name:var(--font-poppins)] mb-3 leading-tight transition-colors tracking-tight`}>
                     {promo.title}
                 </h3>
 
-                <p className="text-zinc-500 text-sm md:text-base leading-relaxed mb-8 line-clamp-3">
+                <p className="text-buddas-brown/80 font-[family-name:var(--font-dm-sans)] text-sm md:text-base leading-relaxed mb-8 line-clamp-3">
                     {promo.description}
                 </p>
 
                 <div className="mt-auto w-full">
-                    {/* CTA: Coupon Code (Gold Theme) */}
+                    {/* CTA: Coupon Code */}
                     {ctaType === 'coupon' && promo.couponCode && (
                         <div className="flex flex-col gap-2">
-                            <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider pl-1">Use Code at Checkout</div>
+                            <div className="text-xs font-bold text-buddas-brown/40 uppercase tracking-wider pl-1 font-[family-name:var(--font-poppins)]">Use Code at Checkout</div>
                             <button
                                 onClick={handleCopy}
-                                className="w-full flex items-center justify-between bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 px-5 py-4 rounded-xl font-mono font-bold transition-all duration-200 group/btn relative overflow-hidden active:scale-95"
+                                className={`w-full flex items-center justify-between border px-5 py-4 rounded-lg font-mono font-bold transition-all duration-200 group/btn relative overflow-hidden active:scale-95 ${theme.badge} bg-white/50 hover:bg-white`}
                             >
                                 <span className="text-lg tracking-widest relative z-10">{promo.couponCode}</span>
                                 <div className="flex items-center gap-2 relative z-10">
@@ -126,12 +180,12 @@ function PromoCard({ promo }: { promo: Promotion }) {
                         </div>
                     )}
 
-                    {/* CTA: External Order (SpotOn) - GOLD/ORANGE THEME */}
+                    {/* CTA: External Order (SpotOn) */}
                     {ctaType === 'external' && (
                         <Link
                             href={promo.link || "#"}
                             target="_blank"
-                            className="w-full flex items-center justify-center gap-3 bg-buddas-gold hover:bg-teal-600 text-white px-5 py-4 rounded-xl font-bold shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all duration-300 active:scale-95 group/btn"
+                            className={`w-full flex items-center justify-center gap-3 px-5 py-4 rounded-lg font-bold shadow-lg transition-all duration-300 active:scale-95 group/btn ${theme.button}`}
                         >
                             <span className="text-sm uppercase tracking-wide">
                                 {promo.buttonText || "Order on SpotOn"}
@@ -140,11 +194,11 @@ function PromoCard({ promo }: { promo: Promotion }) {
                         </Link>
                     )}
 
-                    {/* CTA: Internal Link - BLACK -> GOLD/ORANGE THEME */}
+                    {/* CTA: Internal Link */}
                     {ctaType === 'link' && (
                         <Link
                             href={promo.link || "/menu"}
-                            className="w-full flex items-center justify-between bg-buddas-gold hover:bg-teal-600 text-white px-5 py-4 rounded-xl font-bold transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 group/btn"
+                            className={`w-full flex items-center justify-between px-5 py-4 rounded-lg font-bold transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 group/btn ${theme.button}`}
                         >
                             <span className="text-sm uppercase tracking-wide">
                                 {promo.buttonText || "View Details"}
@@ -153,16 +207,16 @@ function PromoCard({ promo }: { promo: Promotion }) {
                         </Link>
                     )}
 
-                    {/* CTA: Fallback (Location) - GREY -> LIGHT GOLD THEME */}
+                    {/* CTA: Fallback */}
                     {!ctaType && !promo.link && !promo.couponCode && (
                         <Link
                             href="/contact"
-                            className="w-full flex items-center justify-between bg-zinc-50 hover:bg-amber-50 text-zinc-900 px-5 py-4 rounded-xl font-bold transition-all duration-300 active:scale-95 group/btn border border-zinc-200/50 hover:border-amber-200"
+                            className="w-full flex items-center justify-between bg-white/50 hover:bg-white text-buddas-brown px-5 py-4 rounded-lg font-bold transition-all duration-300 active:scale-95 group/btn border border-buddas-brown/10"
                         >
                             <span className="text-sm uppercase tracking-wide">
                                 Visit Location
                             </span>
-                            <MapPin className="w-4 h-4 text-zinc-400 group-hover/btn:text-amber-600 transition-colors" />
+                            <MapPin className="w-4 h-4 text-buddas-brown/40 group-hover/btn:text-buddas-teal transition-colors" />
                         </Link>
                     )}
                 </div>

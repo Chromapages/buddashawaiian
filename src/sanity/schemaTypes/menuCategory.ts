@@ -1,9 +1,11 @@
 // sanity/schemaTypes/menuCategory.ts
 import { defineType, defineField } from "sanity";
+import { List } from "lucide-react";
 
 const menuCategory = defineType({
     name: "menuCategory",
     title: "Menu Category",
+    icon: List,
     type: "document",
     fields: [
         defineField({
