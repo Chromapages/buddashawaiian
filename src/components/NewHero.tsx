@@ -12,17 +12,17 @@ interface NewHeroProps {
 }
 
 export function NewHero({ heroSlides }: NewHeroProps) {
-    // Use data from the first slide as primary content
-    const slide = heroSlides?.[0];
+    // Use data from the first slide as primary content, or default to null
+    const slide = heroSlides && heroSlides.length > 0 ? heroSlides[0] : null;
 
-    // Sanity Data Mapping
-    const heroTitle = slide?.title || "Healthy Eating is an Important Part of Lifestyle";
-    const heroSubtitle = slide?.subtitle || "We Prepare Delicious Food For You We Are Always here to serve you the best healthy meals.";
-    const heroBadge = slide?.badge || "#1 Food Delivery Service";
+    // Sanity Data Mapping with Explicit Fallbacks only if slide is null
+    const heroTitle = slide?.title ?? "Healthy Eating is an Important Part of Lifestyle";
+    const heroSubtitle = slide?.subtitle ?? "We Prepare Delicious Food For You We Are Always here to serve you the best healthy meals.";
+    const heroBadge = slide?.badge ?? "#1 Food Delivery Service";
 
     // Buttons
-    const primaryCtaLabel = slide?.primaryCtaLabel || "Explore Now";
-    const primaryCtaLink = slide?.primaryCtaLink || "/menu";
+    const primaryCtaLabel = slide?.primaryCtaLabel ?? "Explore Now";
+    const primaryCtaLink = slide?.primaryCtaLink ?? "/menu";
 
     // Main Hero Image
     // Use direct asset.url since query expands asset->
@@ -39,8 +39,8 @@ export function NewHero({ heroSlides }: NewHeroProps) {
     };
     const mainImageSrc = getHeroImageSrc();
 
-    const secondaryCtaLabel = slide?.secondaryCtaLabel || "View Specials";
-    const secondaryCtaLink = slide?.secondaryCtaLink || "/menu";
+    const secondaryCtaLabel = slide?.secondaryCtaLabel ?? "View Specials";
+    const secondaryCtaLink = slide?.secondaryCtaLink ?? "/menu";
 
     return (
         <section className="relative w-full overflow-hidden min-h-[650px] lg:min-h-[800px] 2xl:min-h-[900px] flex items-center bg-zinc-900">

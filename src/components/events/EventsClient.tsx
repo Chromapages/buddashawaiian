@@ -44,7 +44,7 @@ export function EventsClient({ data }: EventsClientProps) {
     return (
         <div className="bg-white min-h-screen font-sans text-buddas-dark">
             {/* Parallax Hero Section */}
-            <header className="relative h-[85vh] flex items-center justify-center overflow-hidden bg-buddas-dark">
+            <header className="relative h-[65vh] flex items-center justify-center overflow-hidden bg-buddas-dark">
                 {/* Parallax Background Image */}
                 <div className="absolute inset-0 z-0">
                     <Image
@@ -57,7 +57,7 @@ export function EventsClient({ data }: EventsClientProps) {
                     <div className="absolute inset-0 bg-buddas-dark/40 backdrop-blur-[1px]"></div>
                 </div>
 
-                <AnimatedSection className="relative z-10 max-w-5xl mx-auto px-6 text-center text-white space-y-8">
+                <AnimatedSection className="relative z-10 max-w-5xl mx-auto px-6 text-center text-white space-y-8 mt-10">
                     <div className="inline-flex items-center gap-2 py-2 px-5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold uppercase tracking-wider shadow-lg">
                         <Sparkles className="w-4 h-4" />
                         <span>Full Service Event Planning</span>

@@ -15,6 +15,13 @@ const menuItem = defineType({
             validation: (Rule) => Rule.required().max(60).warning("Keep titles concise for menu boards."),
         }),
         defineField({
+            name: "isSignature",
+            title: "Signature Item?",
+            type: "boolean",
+            description: "Mark as a signature/popular item for a 'Gold Badge'.",
+            initialValue: false,
+        }),
+        defineField({
             name: "slug",
             title: "Slug",
             type: "slug",
@@ -99,6 +106,13 @@ const menuItem = defineType({
             ],
         }),
 
+        defineField({
+            name: "prepTime",
+            title: "Prep Time (Minutes)",
+            type: "string",
+            description: "Estimated prep time (e.g., '10-15', '20+').",
+            initialValue: "15-20",
+        }),
         defineField({
             name: "calories",
             title: "Calories",

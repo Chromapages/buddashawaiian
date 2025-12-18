@@ -22,7 +22,6 @@ export function NewAboutSection({ aboutData }: NewAboutSectionProps) {
     const stats = aboutData?.stats || [];
 
     // We can use a static fallback if no image is provided from Sanity
-    // Ideally this would be a real asset path or a robust placeholder
     const bgImage = aboutData?.teaserBackgroundImage;
 
     // Animation state
@@ -42,40 +41,51 @@ export function NewAboutSection({ aboutData }: NewAboutSectionProps) {
                 backgroundColor: '#5A3A1F' // Fallback color (brand brown)
             }}
         >
-            <div className={`max-w-4xl mx-auto px-6 md:px-8 text-center transition-all duration-1000 ease-out transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className={`max-w-4xl mx-auto px-6 md:px-8 text-center transition-all duration-1000 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                style={{ transitionTimingFunction: 'cubic-bezier(0.25, 0.1, 0.25, 1)' }} // Aloha Motion
+            >
 
                 {/* Heading - Poppins SemiBold, White, Text Shadow */}
                 <h2
                     className="text-4xl md:text-5xl font-poppins font-semibold text-white mb-6 tracking-tight drop-shadow-md"
-                    style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}
+                    style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)', letterSpacing: '-0.01em' }}
                 >
                     {title}
                 </h2>
 
-                {/* Body Text - DM Sans, Light Gray, Readable */}
-                <p className="text-lg md:text-xl text-gray-100 leading-relaxed mb-8 font-dm-sans max-w-xl mx-auto drop-shadow-sm">
+                {/* Body Text - DM Sans, Buddas Cream for warmth */}
+                <p className="text-lg md:text-xl text-buddas-cream leading-relaxed mb-8 font-dm-sans max-w-xl mx-auto drop-shadow-sm">
                     {snippet}
                 </p>
 
-                {/* Stats Bar (Material Style Small Cards) */}
+                {/* Stats Bar - Premium Inline Design */}
                 {stats.length > 0 && (
-                    <div className="flex flex-wrap md:flex-nowrap justify-center gap-4 mb-10">
+                    <div className="inline-flex items-center justify-center gap-0 mb-10 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-2 py-2 shadow-lg">
                         {stats.map((stat, idx) => (
-                            <div
-                                key={idx}
-                                className="bg-white/10 backdrop-blur-none border border-white/20 px-4 py-2 rounded-xl shadow-sm min-w-[100px]"
-                            >
-                                <div className="text-xl font-poppins font-bold text-white leading-none">{stat.value}</div>
-                                <div className="text-[10px] uppercase tracking-wider text-gray-300 font-medium mt-1">{stat.label}</div>
+                            <div key={idx} className="flex items-center">
+                                {/* Stat Item */}
+                                <div className="flex flex-col items-center px-5 py-1">
+                                    <span className="text-2xl md:text-3xl font-poppins font-semibold text-buddas-gold leading-none tracking-tight">
+                                        {stat.value}
+                                    </span>
+                                    <span className="text-[10px] md:text-xs uppercase tracking-widest text-buddas-cream/80 font-dm-sans font-medium mt-1">
+                                        {stat.label}
+                                    </span>
+                                </div>
+                                {/* Gold Divider (except after last item) */}
+                                {idx < stats.length - 1 && (
+                                    <div className="h-8 w-px bg-buddas-gold/40" aria-hidden="true" />
+                                )}
                             </div>
                         ))}
                     </div>
                 )}
 
-                {/* CTA Button - Material Design Elevation (Level 3) */}
+                {/* CTA Button - Material Design Elevation with Aloha Motion */}
                 <Link
                     href="/about"
-                    className="group inline-flex items-center gap-3 bg-buddas-teal text-white px-8 py-4 rounded-lg font-dm-sans font-medium text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus:outline-none focus:ring-4 focus:ring-buddas-teal/50 active:scale-95 active:shadow-md"
+                    className="group inline-flex items-center gap-3 bg-buddas-teal text-white px-8 py-4 rounded-lg font-dm-sans font-medium text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-buddas-teal/50 active:scale-95 active:shadow-md"
+                    style={{ transitionTimingFunction: 'cubic-bezier(0.25, 0.1, 0.25, 1)' }} // Aloha Motion
                 >
                     Read Our Story
                     <ArrowRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" />
@@ -83,7 +93,7 @@ export function NewAboutSection({ aboutData }: NewAboutSectionProps) {
 
             </div>
 
-            {/* Decorative bottom fade to blend with next section (optional, adds polish) */}
+            {/* Decorative bottom fade to blend with next section */}
             <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
         </section>
     );

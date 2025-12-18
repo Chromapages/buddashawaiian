@@ -6,6 +6,7 @@ import { client } from "@/sanity/lib/client";
 import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { ConditionalHeader } from "@/components/ConditionalHeader";
+import { AnnouncementBar } from "@/components/AnnouncementBar";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -57,20 +58,23 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let logoUrl: string | undefined;
-  let orderUrl: string | undefined;
-  let ctaStyle: string | undefined;
+  let siteSettings: any = null;
 
   try {
-    const siteSettings = await client.fetch(SITE_SETTINGS_QUERY);
-    // Use direct asset URL since we're expanding asset-> in the query
-    logoUrl = siteSettings?.logo?.asset?.url || undefined;
-    console.log('[DEBUG] Logo URL from Sanity:', logoUrl);
-    orderUrl = siteSettings?.defaultOrderingUrl;
-    ctaStyle = siteSettings?.headerCtaStyle;
+    siteSettings = await client.fetch(SITE_SETTINGS_QUERY);
   } catch (error) {
-    console.error("Failed to fetch site settings for navigation", error);
+    console.error("Failed to fetch site settings", error);
   }
+
+  const logoUrl = siteSettings?.logo?.asset?.url;
+  const orderUrl = siteSettings?.defaultOrderingUrl;
+  const ctaStyle = siteSettings?.headerCtaStyle;
+  const navigation = siteSettings?.mainNavigation;
+  const socialLinks = siteSettings?.socialLinks;
+  const contactInfo = {
+    phone: siteSettings?.primaryPhone,
+    email: siteSettings?.primaryEmail
+  };
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -83,7 +87,15 @@ export default async function RootLayout({
         className={`${dmSans.variable} ${lilitaOne.variable} ${poppins.variable} antialiased bg-warm-sand text-deep-ocean`}
         suppressHydrationWarning
       >
-        <ConditionalHeader logoUrl={logoUrl} orderUrl={orderUrl} ctaStyle={ctaStyle} />
+        <AnnouncementBar data={siteSettings?.announcement} />
+        <ConditionalHeader
+          logoUrl={logoUrl}
+          orderUrl={orderUrl}
+          ctaStyle={ctaStyle}
+          navigation={navigation}
+          socialLinks={socialLinks}
+          contactInfo={contactInfo}
+        />
         {children}
       </body>
     </html>

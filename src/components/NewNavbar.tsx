@@ -10,27 +10,24 @@ import { Button } from "@/components/ui/button";
 interface NewNavbarProps {
     logoUrl?: string;
     orderUrl?: string;
+    ctaStyle?: string;
+    navigation?: any[];
 }
 
 // Remove MotionLink creation as we use standard components or motion.div
 const MotionLink = motion.create(Link);
 
-export function NewNavbar({ logoUrl, orderUrl }: NewNavbarProps) {
+export function NewNavbar({ logoUrl, orderUrl, ctaStyle, navigation }: NewNavbarProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
     const defaultOrderUrl = "https://order.toasttab.com/online/buddas-hawaiian-bbq-pleasant-grove-pg-123-state-st";
 
     const alohaEase = [0.25, 0.1, 0.25, 1] as any;
 
-    // Hardcoded Nav Links as requested
-    const navLinks = [
-        { href: "/", label: "Home" },
-        { href: "/menu", label: "Menu" },
-        { href: "/catering", label: "Catering" },
-        { href: "/benefit-nights", label: "Events" }, // "Events" maps to benefit nights based on current nav
-        { href: "/about", label: "About" },
-        { href: "/contact", label: "Contact" },
-    ];
+    const navLinks = navigation?.map(link => ({
+        href: link.url,
+        label: link.label
+    })) || [];
 
     const isActive = (path: string) => pathname === path;
 

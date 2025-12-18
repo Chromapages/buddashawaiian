@@ -35,9 +35,18 @@ export default defineType({
                             name: "logo",
                             title: "Logo",
                             type: "image",
+                            description: "Use SVG or high-quality WebP. Max 30KB. Monochromatic preferred for 'Trusted By' strips.",
                             options: {
                                 hotspot: true,
                             },
+                            fields: [
+                                defineField({
+                                    name: "alt",
+                                    title: "Alt Text",
+                                    type: "string",
+                                    validation: (Rule) => Rule.required(),
+                                }),
+                            ],
                         }),
                     ],
                 }),

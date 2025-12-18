@@ -55,6 +55,26 @@ const menuCategory = defineType({
                 }),
             ],
         }),
+        defineField({
+            name: "iconName",
+            title: "Icon Name (Lucide)",
+            type: "string",
+            description: "Use a Lucide icon name like 'ChefHat', 'Utensils', 'Coffee'. See lucide.dev/icons.",
+            options: {
+                list: [
+                    { title: "Chef Hat", value: "ChefHat" },
+                    { title: "Utensils", value: "Utensils" },
+                    { title: "Coffee", value: "Coffee" },
+                    { title: "Cookie", value: "Cookie" },
+                    { title: "Pizza", value: "Pizza" },
+                    { title: "Sandwich", value: "Sandwich" },
+                    { title: "Drumstick", value: "Drumstick" },
+                    { title: "Fish", value: "Fish" },
+                    { title: "Salad", value: "Salad" },
+                    { title: "Leaf", value: "Leaf" },
+                ],
+            },
+        }),
     ],
 });
 

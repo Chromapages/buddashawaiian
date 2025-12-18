@@ -1,7 +1,7 @@
 import { groq } from "next-sanity";
 
 export const HOME_PAGE_QUERY = groq`{
-  "siteSettings": *[_type == "siteSettings"][0] {
+  "siteSettings": *[_type == "siteSettings"] | order(_updatedAt desc)[0] {
     title,
     tagline,
     logo,
@@ -175,9 +175,15 @@ export const HOME_PAGE_QUERY = groq`{
   }
 }`;
 
-export const SITE_SETTINGS_QUERY = groq`*[_type == "siteSettings"][0] {
+export const SITE_SETTINGS_QUERY = groq`*[_type == "siteSettings"] | order(_updatedAt desc)[0] {
   title,
   tagline,
+  announcement {
+    isActive,
+    text,
+    link,
+    colorTheme
+  },
   logo {
     asset->{
       _id,
@@ -292,7 +298,7 @@ export const BENEFIT_NIGHTS_PAGE_QUERY = groq`*[_type == "benefitNightsPage"][0]
   seo
 }`;
 
-export const CATERING_PAGE_QUERY = groq`*[_type == "cateringPage"][0] {
+export const CATERING_PAGE_QUERY = groq`*[_type == "cateringPage"] | order(_updatedAt desc) [0] {
   title,
   heroTitle,
   heroSubtitle,
@@ -300,11 +306,30 @@ export const CATERING_PAGE_QUERY = groq`*[_type == "cateringPage"][0] {
   heroCtaLabel,
   heroCtaLink,
   introduction,
+  testimonial {
+    quote,
+    authorName,
+    authorTitle,
+    authorImage,
+    backgroundImage
+  },
   serviceTypes,
-  menuHighlights,
+  menuHighlights[] {
+    ...,
+    guestCount,
+    features
+  },
   howItWorks,
   faq,
-  seo
+  seo,
+  trustedBy {
+    title,
+    partners[] {
+      name,
+      url,
+      "logo": logo.asset->url
+    }
+  }
 }`;
 
 export const ABOUT_PAGE_QUERY = groq`*[_type == "aboutPage"][0] {

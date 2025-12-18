@@ -10,10 +10,7 @@ import {
     Pizza,
     Leaf,
     Coffee,
-    Cookie,
-    RotateCcw,
-    Utensils,
-    ShoppingBag
+    Cookie
 } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
@@ -26,17 +23,7 @@ interface MenuClientProps {
 }
 
 export function MenuClient({ categories }: MenuClientProps) {
-    const [activeCategory, setActiveCategory] = useState<string>("All Items");
-
-    // Flatten all items for "All Items" view, and remove duplicates if any
-    const allItems = categories.flatMap(cat => cat.items || []);
-    // Deduplicate by ID just in case
-    const uniqueItems = Array.from(new Map(allItems.map((item: any) => [item._id, item])).values());
-
-    // Filter logic
-    const displayedItems = activeCategory === "All Items"
-        ? uniqueItems
-        : categories.find(c => c.title === activeCategory)?.items || [];
+    const [selectedItem, setSelectedItem] = useState<any>(null);
 
     // Helper to get icon for category (Mapping approx to user request)
     const getCategoryIcon = (title: string) => {
@@ -49,10 +36,24 @@ export function MenuClient({ categories }: MenuClientProps) {
         return <ChefHat className="w-5 h-5" />; // Default
     };
 
-    const [selectedItem, setSelectedItem] = useState<any>(null);
+    const scrollToSection = (id: string) => {
+        const element = document.getElementById(id);
+        if (element) {
+            const offset = 180; // Account for sticky header + nav
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = element.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    };
 
     return (
-        <div className="bg-white min-h-screen">
+        <div className="bg-buddas-cream min-h-screen">
             {/* Modal */}
             <MenuModal
                 item={selectedItem}
@@ -60,10 +61,10 @@ export function MenuClient({ categories }: MenuClientProps) {
                 onClose={() => setSelectedItem(null)}
             />
 
-            {/* Parallax Hero Section */}
-            <header className="relative pt-40 pb-20 overflow-hidden bg-warm-sand/20">
+            {/* Hero Section */}
+            <header className="relative h-[65vh] flex items-center justify-center overflow-hidden bg-buddas-brown">
                 {/* Parallax Background Image */}
-                <div className="absolute inset-0 z-0 opacity-10 select-none">
+                <div className="absolute inset-0 z-0 opacity-40 select-none">
                     <Image
                         src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=2000&auto=format&fit=crop"
                         alt="Background Pattern"
@@ -73,105 +74,85 @@ export function MenuClient({ categories }: MenuClientProps) {
                     />
                 </div>
 
-                <AnimatedSection className="max-w-7xl mx-auto px-6 relative z-10 text-center space-y-6">
-                    <span className="inline-block py-1 px-3 rounded-full bg-teal-100 text-[#145B57] text-xs font-bold uppercase tracking-wider mb-2 shadow-sm">
-                        Fresh From Kitchen
+                <AnimatedSection className="max-w-7xl mx-auto px-6 relative z-10 text-center flex flex-col items-center mt-10">
+                    <span className="inline-block py-1.5 px-4 rounded-full bg-buddas-teal/10 text-buddas-teal-light text-xs font-bold uppercase tracking-wider mb-4 shadow-sm border border-buddas-teal/20 backdrop-blur-sm">
+                        Island Favorites
                     </span>
-                    <h1 className="text-5xl md:text-7xl font-bold text-zinc-900 tracking-tight font-poppins drop-shadow-md">
-                        Our Delicious <span className="text-[#145B57] underline decoration-wavy decoration-teal-200 underline-offset-8 drop-shadow-sm">Menu</span>
+                    <h1 className="text-5xl md:text-7xl font-semibold text-buddas-cream tracking-tight font-poppins drop-shadow-md leading-tight mb-4">
+                        The Buddas <span className="text-buddas-teal drop-shadow-sm">Menu</span>
                     </h1>
-                    <p className="text-xl text-zinc-500 max-w-2xl mx-auto">
-                        Explore our wide range of organic, healthy, and fresh meals prepared with love by our expert chefs.
+                    <p className="text-xl text-buddas-cream/80 max-w-2xl mx-auto font-dm-sans leading-relaxed">
+                        Steaming rice. Crisp Katsu. Real Aloha. Explore our plates.
                     </p>
                 </AnimatedSection>
             </header>
 
-            {/* Category Filter (Sticky) */}
-            <div className="sticky top-[100px] z-40 bg-[#FFFBF2]/95 backdrop-blur-sm border-b border-zinc-100 shadow-sm transition-all duration-300 w-full">
+            {/* Quick Nav (Sticky) */}
+            <div className="sticky top-[100px] z-40 bg-buddas-cream/95 backdrop-blur-md border-b border-buddas-brown/5 shadow-sm transition-all duration-300 w-full">
                 <div className="w-full px-4 md:px-8 lg:px-12 py-4 md:py-6">
-                    <div className="flex items-center justify-between gap-6">
-                        {/* Left: Filter Toggles */}
-                        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar flex-1 pb-1 mask-fade-right">
+                    <div className="flex items-center gap-3 overflow-x-auto no-scrollbar mask-fade-right">
+                        {categories.map((category) => (
                             <button
-                                onClick={() => setActiveCategory("All Items")}
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold whitespace-nowrap transition-all text-sm md:text-base ${activeCategory === "All Items"
-                                    ? "bg-[#145B57] text-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] transform translate-y-[1px]"
-                                    : "bg-white border-b-2 border-zinc-200 text-zinc-600 hover:border-[#145B57] hover:text-[#145B57] hover:-translate-y-[1px] shadow-sm hover:shadow-md"
-                                    }`}
+                                key={category._id}
+                                onClick={() => scrollToSection(category.slug?.current || category.title)}
+                                className="flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold whitespace-nowrap transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] text-sm md:text-base font-dm-sans bg-white border border-buddas-brown/10 text-buddas-brown/70 hover:border-buddas-teal hover:text-buddas-teal hover:-translate-y-[1px] shadow-sm hover:shadow-md active:bg-buddas-teal/5"
                             >
-                                <ChefHat className="w-4 h-4" />
-                                All Items
+                                {getCategoryIcon(category.title)}
+                                {category.title}
                             </button>
-
-                            {categories.map((category) => (
-                                <button
-                                    key={category._id}
-                                    onClick={() => setActiveCategory(category.title)}
-                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold whitespace-nowrap transition-all text-sm md:text-base ${activeCategory === category.title
-                                        ? "bg-[#145B57] text-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] transform translate-y-[1px]"
-                                        : "bg-white border-b-2 border-zinc-200 text-zinc-600 hover:border-[#145B57] hover:text-[#145B57] hover:-translate-y-[1px] shadow-sm hover:shadow-md"
-                                        }`}
-                                >
-                                    {getCategoryIcon(category.title)}
-                                    {category.title}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Right: Actions */}
-                        <div className="hidden md:flex items-center gap-3 shrink-0 pl-6 border-l border-zinc-200 ml-auto">
-                            {activeCategory !== "All Items" && (
-                                <button
-                                    onClick={() => setActiveCategory("All Items")}
-                                    className="text-sm font-semibold text-zinc-400 hover:text-zinc-900 transition-colors"
-                                >
-                                    Clear All
-                                </button>
-                            )}
-                            <button className="flex items-center gap-2 bg-zinc-900 text-white px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-zinc-800 transition-colors shadow-sm">
-                                <span>Filters</span>
-                                <span className="bg-zinc-700 text-[10px] px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
-                                    {activeCategory === "All Items" ? uniqueItems.length : displayedItems.length}
-                                </span>
-                            </button>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>
 
-            {/* Menu Grid */}
-            <section className="py-16 relative z-10 bg-white">
-                <div className="max-w-[1920px] mx-auto px-6 md:px-10">
-                    <AnimatedSection delay={100}>
-                        {displayedItems.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
-                                {displayedItems.map((item: any) => (
-                                    <MenuCard
-                                        key={item._id}
-                                        item={item}
-                                        onClick={() => setSelectedItem(item)} // Pass handler
-                                    />
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-20 text-zinc-400">
-                                <Utensils className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                                <p>No items found in this category.</p>
-                            </div>
-                        )}
-                    </AnimatedSection>
+            {/* Menu Sections */}
+            <div className="pb-32">
+                {categories.map((category, index) => (
+                    <section
+                        key={category._id}
+                        id={category.slug?.current || category.title}
+                        className={`py-16 relative z-10 ${index % 2 === 0 ? 'bg-buddas-cream' : 'bg-white'}`}
+                    >
+                        <div className="max-w-[1920px] mx-auto px-6 md:px-10">
+                            <AnimatedSection delay={100}>
+                                {/* Section Header */}
+                                <div className="flex items-center gap-4 mb-8 pb-4 border-b border-buddas-brown/5">
+                                    <span className="text-buddas-teal p-3 bg-buddas-teal/5 rounded-xl">
+                                        {getCategoryIcon(category.title)}
+                                    </span>
+                                    <div>
+                                        <h2 className="text-3xl md:text-4xl font-poppins font-semibold text-buddas-brown tracking-tight">
+                                            {category.title}
+                                        </h2>
+                                        {category.description && (
+                                            <p className="text-base text-buddas-brown/60 font-dm-sans mt-1">
+                                                {category.description}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
 
-                    {/* Load More (Visual only for now) */}
-                    <div className="mt-16 text-center">
-                        <AnimatedSection delay={200} direction="up">
-                            <button className="inline-flex items-center gap-2 bg-white border-b-4 border-zinc-100 text-zinc-900 font-semibold px-8 py-4 rounded-xl hover:border-[#145B57] hover:text-[#145B57] transition-all shadow-[0_4px_10px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-1 active:border-b-0 active:translate-y-1 group">
-                                <span>Load More Items</span>
-                                <RotateCcw className="w-5 h-5 group-hover:rotate-180 transition-transform duration-700" />
-                            </button>
-                        </AnimatedSection>
-                    </div>
-                </div>
-            </section>
+                                {/* Items Grid */}
+                                {category.items && category.items.length > 0 ? (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                                        {category.items.map((item: any) => (
+                                            <MenuCard
+                                                key={item._id}
+                                                item={item}
+                                                onClick={() => setSelectedItem(item)}
+                                            />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12 text-buddas-brown/40 font-dm-sans bg-buddas-brown/5 rounded-2xl border border-dashed border-buddas-brown/10">
+                                        <p>No items currently available in {category.title}.</p>
+                                    </div>
+                                )}
+                            </AnimatedSection>
+                        </div>
+                    </section>
+                ))}
+            </div>
         </div>
     );
 }

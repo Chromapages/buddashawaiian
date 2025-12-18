@@ -24,18 +24,23 @@ const cateringPage = defineType({
             name: "heroTitle",
             title: "Hero Title",
             type: "string",
+            description: "Use the 'Aloha Filter': Warm, Honest, Efficient. (e.g., 'Feed the Whole Crew').",
             group: "content",
+            validation: (Rule) => Rule.max(60).warning("Keep titles punchy for impact."),
         }),
         defineField({
             name: "heroSubtitle",
             title: "Hero Subtitle",
             type: "string",
+            description: "Elaborate on the benefit. (e.g., 'Office lunches, private parties...').",
             group: "content",
+            validation: (Rule) => Rule.max(120),
         }),
         defineField({
             name: "heroImage",
             title: "Hero Image",
             type: "image",
+            description: "Must use 'Golden Hour' lighting. Generosity crop (fill the frame). No cold/blue tones.",
             options: { hotspot: true },
             group: "content",
             fields: [
@@ -65,6 +70,57 @@ const cateringPage = defineType({
             rows: 3,
             group: "content",
             description: "A welcoming message introducing the catering services.",
+        }),
+        defineField({
+            name: "testimonial",
+            title: "Featured Testimonial",
+            type: "object",
+            group: "content",
+            fields: [
+                defineField({ name: "quote", title: "Quote", type: "text", rows: 3 }),
+                defineField({ name: "authorName", title: "Author Name", type: "string" }),
+                defineField({ name: "authorTitle", title: "Author Title", type: "string" }),
+                defineField({ name: "authorImage", title: "Author Image", type: "image", options: { hotspot: true } }),
+                defineField({
+                    name: "backgroundImage",
+                    title: "Background Image",
+                    type: "image",
+                    options: { hotspot: true },
+                    description: "Darker, atmospheric image works best."
+                }),
+            ],
+        }),
+        defineField({
+            name: "trustedBy",
+            title: "Trusted By (Catering Partners)",
+            type: "object",
+            group: "content",
+            description: "Showcase companies that have used your catering services.",
+            fields: [
+                defineField({
+                    name: "title",
+                    title: "Section Title",
+                    type: "string",
+                    initialValue: "Trusted by Leading Companies",
+                }),
+                defineField({
+                    name: "partners",
+                    title: "Partners",
+                    type: "array",
+                    of: [
+                        {
+                            type: "object",
+                            name: "partner",
+                            title: "Partner",
+                            fields: [
+                                defineField({ name: "name", title: "Company Name", type: "string", validation: (Rule) => Rule.required() }),
+                                defineField({ name: "url", title: "Website URL", type: "url" }),
+                                defineField({ name: "logo", title: "Logo", type: "image", options: { hotspot: true }, description: "SVG or WebP preferred. Max 30KB." }),
+                            ],
+                        },
+                    ],
+                }),
+            ],
         }),
 
         // --- HOMEPAGE TEASER CONFIG (MOVED TO TOP LEVEL TO RESTORE DATA) ---
@@ -235,6 +291,12 @@ const cateringPage = defineType({
                             type: "image",
                             options: { hotspot: true },
                         }),
+                        defineField({
+                            name: "ctaLink",
+                            title: "CTA Link (e.g. /contact)",
+                            type: "url",
+                            validation: (Rule) => Rule.uri({ scheme: ['http', 'https', 'mailto', 'tel', '/'] }),
+                        }),
                     ],
                 }),
             ],
@@ -272,6 +334,20 @@ const cateringPage = defineType({
                             title: "Image",
                             type: "image",
                             options: { hotspot: true },
+                        }),
+                        defineField({
+                            name: "guestCount",
+                            title: "Guest Count Label",
+                            type: "string",
+                            initialValue: "10-20 ppl",
+                            description: "E.g., '10-20 ppl' or 'Min 15 people'",
+                        }),
+                        defineField({
+                            name: "features",
+                            title: "Package Features",
+                            type: "array",
+                            of: [{ type: "string" }],
+                            description: "List 3-4 key features like 'Premium Ingredients', 'Customizable', etc.",
                         }),
                     ],
                 }),
