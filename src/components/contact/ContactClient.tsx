@@ -24,16 +24,30 @@ import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { MICROCOPY } from "@/lib/microcopy";
 import { Button } from "@/components/ui/button";
 
+import { urlFor } from "@/sanity/lib/image";
+
 interface ContactClientProps {
     primaryLocation: any;
+    pageData?: {
+        heroTitle?: string;
+        heroSubtitle?: string;
+        heroImage?: any;
+        formTitle?: string;
+        formSubtitle?: string;
+        eventTypes?: string[];
+        faq?: Array<{
+            question: string;
+            answer: string;
+        }>;
+    };
 }
 
-export function ContactClient({ primaryLocation }: ContactClientProps) {
+export function ContactClient({ primaryLocation, pageData }: ContactClientProps) {
     const [guestCount, setGuestCount] = useState<number>(50);
-    const [eventType, setEventType] = useState<string>("Wedding Catering");
+    const [eventType, setEventType] = useState<string>(pageData?.eventTypes?.[0] || "Wedding Catering");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    const eventTypes = ["Wedding Catering", "Corporate Event", "Social Party", "Private Chef", "Other"];
+    const eventTypes = pageData?.eventTypes || ["Wedding Catering", "Corporate Event", "Social Party", "Private Chef", "Other"];
 
     return (
         <div className="bg-buddas-cream min-h-screen font-sans text-buddas-brown">
@@ -41,7 +55,7 @@ export function ContactClient({ primaryLocation }: ContactClientProps) {
             <header className="relative h-[65vh] flex items-center justify-center overflow-hidden bg-buddas-brown">
                 <div className="absolute inset-0 z-0">
                     <Image
-                        src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=2400&auto=format&fit=crop"
+                        src={pageData?.heroImage ? urlFor(pageData.heroImage).url() : "https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=2400&auto=format&fit=crop"}
                         alt="Contact Hero"
                         fill
                         className="object-cover opacity-60"
@@ -52,11 +66,17 @@ export function ContactClient({ primaryLocation }: ContactClientProps) {
 
                 <AnimatedSection className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white space-y-4 mt-10">
                     <h1 className="text-5xl md:text-7xl font-semibold tracking-tight leading-tight font-poppins drop-shadow-md">
-                        Questions? <br />
-                        <span className="text-buddas-teal italic font-serif drop-shadow-sm">We're Here, Ohana.</span>
+                        {pageData?.heroTitle ? (
+                            pageData.heroTitle
+                        ) : (
+                            <>
+                                Questions? <br />
+                                <span className="text-buddas-teal italic font-serif drop-shadow-sm">We're Here, Ohana.</span>
+                            </>
+                        )}
                     </h1>
                     <p className="text-lg md:text-xl text-white/90 max-w-xl mx-auto font-light drop-shadow-sm">
-                        From catering your big day to answering your questions, we're ready to help bring the Aloha spirit to your table.
+                        {pageData?.heroSubtitle || "From catering your big day to answering your questions, we're ready to help bring the Aloha spirit to your table."}
                     </p>
                 </AnimatedSection>
             </header>
@@ -68,8 +88,12 @@ export function ContactClient({ primaryLocation }: ContactClientProps) {
 
                         <AnimatedSection delay={100} className="w-full lg:w-3/5 p-8 md:p-12 lg:p-16">
                             <div className="mb-10">
-                                <h2 className="text-3xl font-semibold text-buddas-brown tracking-tight mb-2 font-poppins">Send us a message</h2>
-                                <p className="text-buddas-brown/60">Fill out the form below and we'll get back to you within 24 hours.</p>
+                                <h2 className="text-3xl font-semibold text-buddas-brown tracking-tight mb-2 font-poppins">
+                                    {pageData?.formTitle || "Send us a message"}
+                                </h2>
+                                <p className="text-buddas-brown/60">
+                                    {pageData?.formSubtitle || "Fill out the form below and we'll get back to you within 24 hours."}
+                                </p>
                             </div>
 
                             <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
@@ -283,38 +307,30 @@ export function ContactClient({ primaryLocation }: ContactClientProps) {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                        {/* FAQ Item 1 */}
-                        <div className="group bg-white rounded-xl border border-buddas-brown/10 p-6 hover:shadow-lg hover:border-buddas-teal/30 transition-all cursor-pointer">
-                            <div className="flex justify-between items-center">
-                                <h3 className="font-semibold text-buddas-brown">How far in advance should I book?</h3>
-                                <PlusCircle className="text-buddas-brown/40 w-6 h-6 group-hover:text-buddas-teal group-hover:rotate-45 transition-all" />
+                        {(pageData?.faq || [
+                            {
+                                question: "How far in advance should I book?",
+                                answer: "We recommend booking at least 3 months in advance for large events (weddings, galas) and 2 weeks for smaller corporate gatherings to ensure availability."
+                            },
+                            {
+                                question: "Do you accommodate dietary restrictions?",
+                                answer: "Absolutely. Our culinary team specializes in creating delicious menus for vegan, gluten-free, keto, and kosher requirements without compromising on taste."
+                            },
+                            {
+                                question: "Is there a minimum guest count?",
+                                answer: "Our minimum for full-service catering is 10 guests. For smaller private chef experiences, we can accommodate groups as small as 2."
+                            }
+                        ]).map((item, index) => (
+                            <div key={index} className="group bg-white rounded-xl border border-buddas-brown/10 p-6 hover:shadow-lg hover:border-buddas-teal/30 transition-all cursor-pointer">
+                                <div className="flex justify-between items-center">
+                                    <h3 className="font-semibold text-buddas-brown">{item.question}</h3>
+                                    <PlusCircle className="text-buddas-brown/40 w-6 h-6 group-hover:text-buddas-teal group-hover:rotate-45 transition-all" />
+                                </div>
+                                <p className="text-buddas-brown/70 text-sm mt-3 leading-relaxed hidden group-hover:block animate-in fade-in duration-300">
+                                    {item.answer}
+                                </p>
                             </div>
-                            <p className="text-buddas-brown/70 text-sm mt-3 leading-relaxed hidden group-hover:block animate-in fade-in duration-300">
-                                We recommend booking at least 3 months in advance for large events (weddings, galas) and 2 weeks for smaller corporate gatherings to ensure availability.
-                            </p>
-                        </div>
-
-                        {/* FAQ Item 2 */}
-                        <div className="group bg-white rounded-xl border border-buddas-brown/10 p-6 hover:shadow-lg hover:border-buddas-teal/30 transition-all cursor-pointer">
-                            <div className="flex justify-between items-center">
-                                <h3 className="font-semibold text-buddas-brown">Do you accommodate dietary restrictions?</h3>
-                                <PlusCircle className="text-buddas-brown/40 w-6 h-6 group-hover:text-buddas-teal group-hover:rotate-45 transition-all" />
-                            </div>
-                            <p className="text-buddas-brown/70 text-sm mt-3 leading-relaxed hidden group-hover:block animate-in fade-in duration-300">
-                                Absolutely. Our culinary team specializes in creating delicious menus for vegan, gluten-free, keto, and kosher requirements without compromising on taste.
-                            </p>
-                        </div>
-
-                        {/* FAQ Item 3 */}
-                        <div className="group bg-white rounded-xl border border-buddas-brown/10 p-6 hover:shadow-lg hover:border-buddas-teal/30 transition-all cursor-pointer">
-                            <div className="flex justify-between items-center">
-                                <h3 className="font-semibold text-buddas-brown">Is there a minimum guest count?</h3>
-                                <PlusCircle className="text-buddas-brown/40 w-6 h-6 group-hover:text-buddas-teal group-hover:rotate-45 transition-all" />
-                            </div>
-                            <p className="text-buddas-brown/70 text-sm mt-3 leading-relaxed hidden group-hover:block animate-in fade-in duration-300">
-                                Our minimum for full-service catering is 10 guests. For smaller private chef experiences, we can accommodate groups as small as 2.
-                            </p>
-                        </div>
+                        ))}
                     </div>
                 </section>
             </AnimatedSection>

@@ -427,3 +427,15 @@ export const KEY_INFO_QUERY = groq`* [_type == "location" && isPrimaryLocation =
     mapUrl,
     orderingUrl
 }`;
+
+export const CONTACT_PAGE_QUERY = groq`*[_type == "contactPage"][0] {
+    title,
+    heroTitle,
+    heroSubtitle,
+    heroImage,
+    formTitle,
+    formSubtitle,
+    eventTypes,
+    faq,
+    seo
+  }`;

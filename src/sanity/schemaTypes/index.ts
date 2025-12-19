@@ -2,6 +2,7 @@ import aboutPage from './aboutPage'
 import benefitNightsPage from './benefitNightsPage'
 import buddalinksPage from './buddalinksPage'
 import cateringPage from './cateringPage'
+import contactPage from './contactPage'
 import ctaSection from './ctaSection'
 import heroSlide from './heroSlide'
 import location from './location'
@@ -25,6 +26,7 @@ export const schema = {
         cateringPage,
         page,
         rewardsPage,
+        contactPage,
 
         // Menu
         menuCategory,
