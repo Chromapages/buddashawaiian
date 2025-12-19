@@ -8,6 +8,8 @@ const aboutPage = defineType({
     type: "document",
     groups: [
         { name: "content", title: "Page Content", default: true },
+        { name: "heritage", title: "Hawaiian Heritage" },
+        { name: "cta", title: "Closing CTA" },
         { name: "teaser", title: "Homepage Teaser" },
         { name: "seo", title: "SEO" },
     ],
@@ -113,6 +115,17 @@ const aboutPage = defineType({
             ],
         }),
         defineField({
+            name: "heritage",
+            title: "Hawaiian Heritage Section",
+            type: "object",
+            group: "heritage",
+            fields: [
+                defineField({ name: "title", title: "Title", type: "string", initialValue: "Rooted in Tradition" }),
+                defineField({ name: "content", title: "Content", type: "array", of: [{ type: "block" }] }),
+                defineField({ name: "image", title: "Image", type: "image", options: { hotspot: true } }),
+            ],
+        }),
+        defineField({
             name: "values",
             title: "Our Values",
             type: "array",
@@ -146,44 +159,6 @@ const aboutPage = defineType({
             ],
         }),
         defineField({
-            name: "team",
-            title: "Meet the Team",
-            type: "array",
-            group: "content",
-            of: [
-                defineField({
-                    name: "member",
-                    title: "Team Member",
-                    type: "object",
-                    fields: [
-                        defineField({
-                            name: "name",
-                            title: "Name",
-                            type: "string",
-                            validation: (Rule) => Rule.required(),
-                        }),
-                        defineField({
-                            name: "role",
-                            title: "Role",
-                            type: "string",
-                        }),
-                        defineField({
-                            name: "bio",
-                            title: "Bio",
-                            type: "text",
-                            rows: 3,
-                        }),
-                        defineField({
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                            options: { hotspot: true },
-                        }),
-                    ],
-                }),
-            ],
-        }),
-        defineField({
             name: "gallery",
             title: "Photo Gallery",
             type: "array",
@@ -202,6 +177,18 @@ const aboutPage = defineType({
                         }),
                     ],
                 }),
+            ],
+        }),
+        defineField({
+            name: "closingCta",
+            title: "Closing CTA",
+            type: "object",
+            group: "cta",
+            fields: [
+                defineField({ name: "title", title: "Title", type: "string", initialValue: "Join Our Ohana" }),
+                defineField({ name: "subtitle", title: "Subtitle", type: "string" }),
+                defineField({ name: "buttonLabel", title: "Button Label", type: "string", initialValue: "Order Now" }),
+                defineField({ name: "buttonLink", title: "Button Link", type: "url" }),
             ],
         }),
         defineField({

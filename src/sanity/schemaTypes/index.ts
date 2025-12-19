@@ -14,6 +14,7 @@ import promotion from './promotion'
 import rewardsPage from './rewardsPage'
 import seo from './seo'
 import siteSettings from './siteSettings'
+import event from './event'
 import testimonial from './testimonial'
 import trustedBySection from './trustedBySection'
 
@@ -45,6 +46,7 @@ export const schema = {
         siteSettings,
         location,
         testimonial,
+        event,
 
         // SEO
         seo,

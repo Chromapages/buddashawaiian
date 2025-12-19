@@ -21,13 +21,14 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
-import { AnimatedSection } from "@/components/ui/AnimatedSection";
+
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 
 interface CateringClientProps {
     data: any;
@@ -45,7 +46,8 @@ export function CateringClient({ data }: CateringClientProps) {
         menuHighlights,
         howItWorks,
         trustedBy,
-        faq
+        faq,
+        closingCta
     } = data;
 
     // Use default image if none provided
@@ -67,7 +69,7 @@ export function CateringClient({ data }: CateringClientProps) {
                     />
                 </div>
 
-                <AnimatedSection className="max-w-4xl mx-auto px-6 relative z-10 text-center space-y-8 mt-10">
+                <div className="max-w-4xl mx-auto px-6 relative z-10 text-center space-y-8 mt-10">
                     <div className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-buddas-teal/10 border border-buddas-teal/20 text-buddas-teal-dark text-xs font-bold uppercase tracking-wider shadow-sm backdrop-blur-sm">
                         <Sparkles className="w-4 h-4" />
                         <span>Catering & Events</span>
@@ -93,10 +95,10 @@ export function CateringClient({ data }: CateringClientProps) {
                             Download Menu
                         </button>
                     </div>
-                </AnimatedSection>
+                </div>
             </header>
 
-            <AnimatedSection delay={100}>
+            <div>
                 {/* Catering Trusted By Section */}
                 {trustedBy?.partners && trustedBy.partners.length > 0 && (
                     <section className="py-12 bg-white border-b border-buddas-brown/10">
@@ -172,10 +174,10 @@ export function CateringClient({ data }: CateringClientProps) {
                         </div>
                     </div>
                 </section>
-            </AnimatedSection>
+            </div>
 
             {/* Parallax Break Section */}
-            <AnimatedSection delay={200}>
+            <div>
                 <section className="py-20 relative flex items-center justify-center overflow-hidden bg-buddas-brown">
                     <div className="absolute inset-0 z-0 opacity-20">
                         <Image
@@ -214,10 +216,10 @@ export function CateringClient({ data }: CateringClientProps) {
                         </div>
                     </div>
                 </section>
-            </AnimatedSection>
+            </div>
 
             {/* Popular Packages (Menu Highlights) */}
-            <AnimatedSection delay={200}>
+            <div>
                 <section className="py-24 relative z-10 bg-white">
                     <div className="max-w-7xl mx-auto px-6">
                         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
@@ -277,10 +279,10 @@ export function CateringClient({ data }: CateringClientProps) {
                         </div>
                     </div>
                 </section>
-            </AnimatedSection>
+            </div>
 
             {/* How It Works */}
-            <AnimatedSection delay={300}>
+            <div>
                 <section className="py-24 bg-white relative z-10 border-t border-buddas-brown/10">
                     <div className="max-w-7xl mx-auto px-6">
                         <div className="text-center mb-20">
@@ -309,11 +311,11 @@ export function CateringClient({ data }: CateringClientProps) {
                         </div>
                     </div>
                 </section>
-            </AnimatedSection>
+            </div>
 
             {/* FAQ Section */}
             {faq && faq.length > 0 && (
-                <AnimatedSection delay={200}>
+                <div>
                     <section className="py-24 bg-buddas-cream relative z-10 border-t border-buddas-brown/10">
                         <div className="max-w-6xl mx-auto px-6">
                             <div className="text-center mb-16">
@@ -336,8 +338,29 @@ export function CateringClient({ data }: CateringClientProps) {
                             </div>
                         </div>
                     </section>
-                </AnimatedSection>
+                </div>
             )}
+
+            <section className="py-24 relative bg-buddas-teal overflow-hidden">
+                <div className="absolute inset-0 opacity-10 pattern-dots"></div>
+                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white">
+                    <h2 className="text-4xl md:text-5xl font-semibold mb-6 font-poppins">
+                        {closingCta?.title || "Join Our Ohana"}
+                    </h2>
+                    <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+                        {closingCta?.subtitle || "Ready to taste the difference? Stop by for a plate, or deliver some Aloha to your door."}
+                    </p>
+                    <Button
+                        asChild
+                        size="lg"
+                        className="bg-buddas-cream text-buddas-brown hover:bg-white hover:text-buddas-teal transition-colors font-semibold uppercase tracking-wide rounded-lg px-8 py-6 h-auto text-lg"
+                    >
+                        <Link href={closingCta?.buttonLink || "/menu"}>
+                            {closingCta?.buttonLabel || "Order Now"}
+                        </Link>
+                    </Button>
+                </div>
+            </section>
         </div>
     );
 }

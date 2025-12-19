@@ -20,7 +20,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { AnimatedSection } from "@/components/ui/AnimatedSection";
+
 import { MICROCOPY } from "@/lib/microcopy";
 import { Button } from "@/components/ui/button";
 
@@ -55,7 +55,7 @@ export function ContactClient({ primaryLocation, pageData }: ContactClientProps)
             <header className="relative h-[65vh] flex items-center justify-center overflow-hidden bg-buddas-brown">
                 <div className="absolute inset-0 z-0">
                     <Image
-                        src={pageData?.heroImage ? urlFor(pageData.heroImage).url() : "https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=2400&auto=format&fit=crop"}
+                        src={pageData?.heroImage?.asset ? urlFor(pageData.heroImage).url() : "https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=2400&auto=format&fit=crop"}
                         alt="Contact Hero"
                         fill
                         className="object-cover opacity-60"
@@ -64,7 +64,7 @@ export function ContactClient({ primaryLocation, pageData }: ContactClientProps)
                     <div className="absolute inset-0 bg-buddas-brown/50"></div>
                 </div>
 
-                <AnimatedSection className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white space-y-4 mt-10">
+                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white space-y-4 mt-10">
                     <h1 className="text-5xl md:text-7xl font-semibold tracking-tight leading-tight font-poppins drop-shadow-md">
                         {pageData?.heroTitle ? (
                             pageData.heroTitle
@@ -78,7 +78,7 @@ export function ContactClient({ primaryLocation, pageData }: ContactClientProps)
                     <p className="text-lg md:text-xl text-white/90 max-w-xl mx-auto font-light drop-shadow-sm">
                         {pageData?.heroSubtitle || "From catering your big day to answering your questions, we're ready to help bring the Aloha spirit to your table."}
                     </p>
-                </AnimatedSection>
+                </div>
             </header>
 
             {/* Main Content Card */}
@@ -86,7 +86,7 @@ export function ContactClient({ primaryLocation, pageData }: ContactClientProps)
                 <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-2xl shadow-zinc-900/5 border border-zinc-100 overflow-hidden">
                     <div className="flex flex-col lg:flex-row">
 
-                        <AnimatedSection delay={100} className="w-full lg:w-3/5 p-8 md:p-12 lg:p-16">
+                        <div className="w-full lg:w-3/5 p-8 md:p-12 lg:p-16">
                             <div className="mb-10">
                                 <h2 className="text-3xl font-semibold text-buddas-brown tracking-tight mb-2 font-poppins">
                                     {pageData?.formTitle || "Send us a message"}
@@ -203,9 +203,9 @@ export function ContactClient({ primaryLocation, pageData }: ContactClientProps)
                                     <Send className="w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                 </Button>
                             </form>
-                        </AnimatedSection>
+                        </div>
 
-                        <AnimatedSection delay={200} direction="left" className="w-full lg:w-2/5 bg-buddas-cream border-t lg:border-t-0 lg:border-l border-buddas-brown/10 p-8 md:p-12 relative overflow-hidden">
+                        <div className="w-full lg:w-2/5 bg-buddas-cream border-t lg:border-t-0 lg:border-l border-buddas-brown/10 p-8 md:p-12 relative overflow-hidden">
                             {/* Decorative Pattern */}
                             <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-buddas-orange/20 rounded-full blur-3xl"></div>
                             <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-buddas-teal/20 rounded-full blur-3xl"></div>
@@ -294,12 +294,12 @@ export function ContactClient({ primaryLocation, pageData }: ContactClientProps)
                                     </div>
                                 </div>
                             </div>
-                        </AnimatedSection>
+                        </div>
                     </div>
                 </div>
             </main>
 
-            <AnimatedSection delay={300}>
+            <div>
                 <section className="py-20 px-6 max-w-6xl mx-auto w-full">
                     <div className="text-center mb-12">
                         <span className="text-buddas-orange font-bold tracking-widest uppercase text-xs mb-3 block">Support</span>
@@ -333,7 +333,7 @@ export function ContactClient({ primaryLocation, pageData }: ContactClientProps)
                         ))}
                     </div>
                 </section>
-            </AnimatedSection>
+            </div>
         </div>
     );
 }

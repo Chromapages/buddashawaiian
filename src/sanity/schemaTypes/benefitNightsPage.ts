@@ -254,6 +254,213 @@ const benefitNightsPage = defineType({
             ],
         }),
         defineField({
+            name: "eventTypes",
+            title: "Event Types",
+            type: "array",
+            description: "Cards showcasing different types of events (e.g., Fundraisers, Catering, Private Parties)",
+            of: [
+                {
+                    type: "object",
+                    fields: [
+                        defineField({
+                            name: "title",
+                            title: "Title",
+                            type: "string",
+                        }),
+                        defineField({
+                            name: "description",
+                            title: "Description",
+                            type: "string",
+                        }),
+                        defineField({
+                            name: "image",
+                            title: "Image",
+                            type: "image",
+                            options: {
+                                hotspot: true,
+                            },
+                        }),
+                        defineField({
+                            name: "ctaLabel",
+                            title: "Button Label",
+                            type: "string",
+                        }),
+                        defineField({
+                            name: "ctaLink",
+                            title: "Button Link",
+                            type: "string",
+                        }),
+                    ]
+                }
+            ]
+        }),
+        defineField({
+            name: "fundraisingProgram",
+            title: "Fundraising Program Details",
+            type: "object",
+            fields: [
+                defineField({
+                    name: "title",
+                    title: "Section Title",
+                    type: "string",
+                    initialValue: "Fundraising Made Delicious"
+                }),
+                defineField({
+                    name: "description",
+                    title: "Description",
+                    type: "text",
+                    initialValue: "Host a Benefit Night with us and we’ll donate 20% of sales back to your cause. It’s the easiest way to raise funds for your school, team, or non-profit."
+                }),
+                defineField({
+                    name: "percentage",
+                    title: "Giveback Percentage",
+                    type: "string",
+                    initialValue: "20%"
+                }),
+                defineField({
+                    name: "programImage",
+                    title: "Program Image",
+                    type: "image",
+                    options: {
+                        hotspot: true,
+                    }
+                }),
+                defineField({
+                    name: "flyerDownload",
+                    title: "Flyer/Info PDF",
+                    type: "file",
+                    description: "Optional downloadable flyer for the program"
+                })
+            ]
+        }),
+        defineField({
+            name: "testimonials",
+            title: "Testimonials",
+            type: "array",
+            of: [
+                {
+                    type: "object",
+                    fields: [
+                        defineField({
+                            name: "quote",
+                            title: "Quote",
+                            type: "text",
+                            rows: 3
+                        }),
+                        defineField({
+                            name: "author",
+                            title: "Author/Organization",
+                            type: "string",
+                        }),
+                        defineField({
+                            name: "role",
+                            title: "Role/Event Type",
+                            type: "string",
+                            description: "e.g. 'PTA President' or 'Wedding Reception'"
+                        }),
+                        defineField({
+                            name: "image",
+                            title: "Author Image",
+                            type: "image",
+                            options: { hotspot: true }
+                        })
+                    ]
+                }
+            ]
+        }),
+        defineField({
+            name: "pastEventsGallery",
+            title: "Past Events Gallery",
+            type: "object",
+            fields: [
+                defineField({
+                    name: "title",
+                    title: "Gallery Title",
+                    type: "string",
+                    initialValue: "Memories Made with Buddas"
+                }),
+                defineField({
+                    name: "images",
+                    title: "Images",
+                    type: "array",
+                    of: [{ type: "image", options: { hotspot: true } }],
+                    options: {
+                        layout: 'grid'
+                    }
+                })
+            ]
+        }),
+
+        defineField({
+            name: "packages",
+            title: "Catering Packages",
+            type: "array",
+            of: [
+                {
+                    type: "object",
+                    fields: [
+                        defineField({
+                            name: "name",
+                            title: "Package Name",
+                            type: "string",
+                            description: "e.g. 'Ohana Buffet', 'Island Boxed Lunch'"
+                        }),
+                        defineField({
+                            name: "price",
+                            title: "Price",
+                            type: "string",
+                            description: "e.g. '$25 / person'"
+                        }),
+                        defineField({
+                            name: "description",
+                            title: "Description",
+                            type: "text",
+                            rows: 3
+                        }),
+                        defineField({
+                            name: "features",
+                            title: "Included Features",
+                            type: "array",
+                            of: [{ type: "string" }]
+                        }),
+                        defineField({
+                            name: "highlight",
+                            title: "Highlight (Best Value)",
+                            type: "boolean",
+                            initialValue: false
+                        })
+                    ]
+                }
+            ]
+        }),
+        defineField({
+            name: "closingCta",
+            title: "Closing CTA",
+            type: "object",
+            fields: [
+                defineField({
+                    name: "title",
+                    title: "Title",
+                    type: "string",
+                }),
+                defineField({
+                    name: "subtitle",
+                    title: "Subtitle",
+                    type: "string",
+                }),
+                defineField({
+                    name: "buttonLabel",
+                    title: "Button Label",
+                    type: "string",
+                }),
+                defineField({
+                    name: "buttonLink",
+                    title: "Button Link",
+                    type: "string",
+                }),
+            ]
+        }),
+        defineField({
             name: "seo",
             title: "SEO",
             type: "seo",

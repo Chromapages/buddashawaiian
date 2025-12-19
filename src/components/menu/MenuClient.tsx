@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { MenuCard } from "./MenuCard";
 import { MenuModal } from "./MenuModal";
 import {
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
+import { Button } from "@/components/ui/button";
 
 interface MenuClientProps {
     categories: any[];
@@ -153,6 +155,27 @@ export function MenuClient({ categories }: MenuClientProps) {
                     </section>
                 ))}
             </div>
+
+            <section className="py-24 relative bg-buddas-teal overflow-hidden">
+                <div className="absolute inset-0 opacity-10 pattern-dots"></div>
+                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white">
+                    <h2 className="text-4xl md:text-5xl font-semibold mb-6 font-poppins">
+                        Join Our Ohana
+                    </h2>
+                    <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+                        Ready to taste the difference? Stop by for a plate, or deliver some Aloha to your door.
+                    </p>
+                    <Button
+                        asChild
+                        size="lg"
+                        className="bg-buddas-cream text-buddas-brown hover:bg-white hover:text-buddas-teal transition-colors font-semibold uppercase tracking-wide rounded-lg px-8 py-6 h-auto text-lg"
+                    >
+                        <Link href="/menu">
+                            Order Now
+                        </Link>
+                    </Button>
+                </div>
+            </section>
         </div>
     );
 }

@@ -325,7 +325,22 @@ export const BENEFIT_NIGHTS_PAGE_QUERY = groq`*[_type == "benefitNightsPage"] | 
   howItWorksSectionSubtitle,
   howItWorks,
   faq,
-  statsSection,
+  eventTypes,
+  fundraisingProgram,
+  testimonials,
+  pastEventsGallery,
+  packages,
+  closingCta,
+  "upcomingEvents": *[_type == "event" && date > now()] | order(date asc) {
+    title,
+    slug,
+    date,
+    location,
+    image,
+    description,
+    ctaLabel,
+    ctaLink
+  },
   seo
 }`;
 
@@ -372,9 +387,12 @@ export const ABOUT_PAGE_QUERY = groq`*[_type == "aboutPage"][0] {
   storyTitle,
   storyContent,
   storyImage,
+  founder,
+  heritage,
   values,
   team,
   gallery,
+  closingCta,
   seo
 }`;
 
