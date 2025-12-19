@@ -1,0 +1,83 @@
+/* Import Buddas Brand Fonts */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Override Sanity's font variables */
+  --font-family-base: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Liberation Sans', Helvetica, Arial, system-ui, sans-serif !important;
+  --font-family-monospace: 'SF Mono', 'Segoe UI Mono', 'Roboto Mono', 'Ubuntu Mono', monospace;
+}
+
+/* Force headings to use Poppins */
+[class^="Heading_"],
+[class*="heading"],
+h1,
+h2,
+h3,
+h4,
+[data-ui="Heading"] {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Subtle inset depth for inputs to reduce "flatness" */
+input,
+textarea,
+[data-ui="TextInput"] {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Scrollbar customization for brand feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0D2B27;
+  /* Deepest Teal */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1C5F56;
+  /* Dark Teal */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #54BFA5;
+  /* Base Teal */
+}
+
+/* Force Brand Colors on Primary/Success Buttons (Publish Actions) */
+button[data-ui="Button"][data-tone="positive"],
+button[data-ui="Button"][data-tone="primary"],
+a[data-ui="Button"][data-tone="positive"],
+a[data-ui="Button"][data-tone="primary"] {
+  background-color: #54BFA5 !important;
+  /* Base Teal */
+  color: #FFFFFF !important;
+  /* Pure White Text */
+  border-radius: 8px !important;
+  /* Brand Radius */
+}
+
+button[data-ui="Button"][data-tone="positive"]:hover,
+button[data-ui="Button"][data-tone="primary"]:hover,
+a[data-ui="Button"][data-tone="positive"]:hover,
+a[data-ui="Button"][data-tone="primary"]:hover {
+  background-color: #2A6E63 !important;
+  /* Mid/Dark Teal on hover */
+  transform: translateY(-1px);
+}
+
+/* Fix Disabled State Visibility */
+button[data-ui="Button"][disabled],
+button[data-ui="Button"][data-disabled],
+a[data-ui="Button"][data-disabled] {
+  background-color: #1C5F56 !important;
+  /* Dark Teal */
+  color: rgba(255, 255, 255, 0.4) !important;
+  /* Dimmed White */
+  opacity: 0.7 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}

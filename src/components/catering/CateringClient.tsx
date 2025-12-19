@@ -21,6 +21,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface CateringClientProps {
     data: any;
@@ -37,7 +43,8 @@ export function CateringClient({ data }: CateringClientProps) {
         serviceTypes,
         menuHighlights,
         howItWorks,
-        trustedBy
+        trustedBy,
+        faq
     } = data;
 
     // Use default image if none provided
@@ -302,6 +309,37 @@ export function CateringClient({ data }: CateringClientProps) {
                     </div>
                 </section>
             </AnimatedSection>
+
+            {/* FAQ Section */}
+            {faq && faq.length > 0 && (
+                <AnimatedSection delay={200}>
+                    <section className="py-24 bg-buddas-cream relative z-10 border-t border-buddas-brown/10">
+                        <div className="max-w-4xl mx-auto px-6">
+                            <div className="text-center mb-16">
+                                <span className="text-buddas-orange font-bold tracking-widest uppercase text-xs mb-3 block">Common Questions</span>
+                                <h2 className="text-3xl md:text-5xl font-bold text-buddas-brown tracking-tight font-poppins">Frequently Asked Questions</h2>
+                            </div>
+
+                            <Accordion type="single" collapsible className="w-full space-y-4">
+                                {faq.map((item: any, idx: number) => (
+                                    <AccordionItem
+                                        key={item._key || idx}
+                                        value={`item-${idx}`}
+                                        className="bg-white px-6 rounded-2xl border border-buddas-brown/10 shadow-sm data-[state=open]:border-buddas-teal/30 transition-all duration-300"
+                                    >
+                                        <AccordionTrigger className="text-left text-lg font-semibold text-buddas-brown hover:text-buddas-teal hover:no-underline py-6 [&[data-state=open]]:text-buddas-teal font-poppins">
+                                            {item.question}
+                                        </AccordionTrigger>
+                                        <AccordionContent className="text-buddas-brown/70 leading-relaxed pb-6 text-base font-dm-sans">
+                                            {item.answer}
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
+                        </div>
+                    </section>
+                </AnimatedSection>
+            )}
         </div>
     );
 }

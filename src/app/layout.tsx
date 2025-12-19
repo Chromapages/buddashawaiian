@@ -6,7 +6,7 @@ import { client } from "@/sanity/lib/client";
 import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { ConditionalHeader } from "@/components/ConditionalHeader";
-import { AnnouncementBar } from "@/components/AnnouncementBar";
+import { ConditionalAnnouncement } from "@/components/ConditionalAnnouncement";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -88,7 +88,7 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <div className="sticky top-0 z-50 w-full transition-all duration-300">
-          <AnnouncementBar data={siteSettings?.announcement} />
+          <ConditionalAnnouncement data={siteSettings?.announcement} />
           <ConditionalHeader
             logoUrl={logoUrl}
             orderUrl={orderUrl}

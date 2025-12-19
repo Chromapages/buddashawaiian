@@ -10,7 +10,7 @@ interface AnnouncementProps {
         isActive?: boolean;
         text?: string;
         link?: string;
-        colorTheme?: "teal" | "orange";
+        colorTheme?: "teal" | "dark-teal" | "gold" | "orange" | "brown";
     };
 }
 
@@ -21,9 +21,23 @@ export function AnnouncementBar({ data }: AnnouncementProps) {
         return null;
     }
 
-    const isUrgent = data.colorTheme === "orange";
-    const bgColor = isUrgent ? "bg-buddas-orange" : "bg-buddas-teal";
-    const textColor = "text-white";
+    const getColorClasses = (theme?: string) => {
+        switch (theme) {
+            case "dark-teal":
+                return { bg: "bg-buddas-teal-dark", text: "text-white" };
+            case "gold":
+                return { bg: "bg-buddas-gold", text: "text-buddas-brown" };
+            case "orange":
+                return { bg: "bg-buddas-orange", text: "text-white" };
+            case "brown":
+                return { bg: "bg-buddas-brown", text: "text-white" };
+            case "teal":
+            default:
+                return { bg: "bg-buddas-teal", text: "text-white" };
+        }
+    };
+
+    const colors = getColorClasses(data.colorTheme);
 
     return (
         <AnimatePresence>
@@ -32,7 +46,7 @@ export function AnnouncementBar({ data }: AnnouncementProps) {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className={`${bgColor} ${textColor} relative z-50 overflow-hidden`}
+                    className={`${colors.bg} ${colors.text} relative z-50 overflow-hidden`}
                 >
                     <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-center relative min-h-[44px] text-sm font-medium font-dm-sans">
                         <div className="flex items-center justify-center gap-2 text-center px-8">

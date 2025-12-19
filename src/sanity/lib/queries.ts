@@ -193,7 +193,12 @@ export const SITE_SETTINGS_QUERY = groq`*[_type == "siteSettings"] | order(_upda
     crop
   },
   headerCtaStyle,
-  favicon,
+  favicon {
+    asset->{
+      _id,
+      url
+    }
+  },
   mainNavigation[] {
     label,
     url
@@ -284,17 +289,43 @@ export const REWARDS_PAGE_QUERY = groq`*[_type == "rewardsPage"][0] {
   seo
 }`;
 
-export const BENEFIT_NIGHTS_PAGE_QUERY = groq`*[_type == "benefitNightsPage"][0] {
+export const BENEFIT_NIGHTS_PAGE_QUERY = groq`*[_type == "benefitNightsPage"] | order(_updatedAt desc) [0] {
   title,
   heroTitle,
   heroSubtitle,
-  heroImage,
+  heroBadge,
+  heroImage {
+    asset->{
+      _id,
+      url
+    },
+    hotspot,
+    crop
+  },
+
   heroCtaLabel,
   heroCtaLink,
+  trustedBy {
+      title,
+      partners[] {
+        name,
+        logo {
+          asset->{
+            _id,
+            url
+          }
+        }
+      }
+  },
   headlinePercentage,
+  benefitsSectionTitle,
+  benefitsSectionSubtitle,
   benefits,
+  howItWorksSectionTitle,
+  howItWorksSectionSubtitle,
   howItWorks,
   faq,
+  statsSection,
   seo
 }`;
 
@@ -321,6 +352,7 @@ export const CATERING_PAGE_QUERY = groq`*[_type == "cateringPage"] | order(_upda
   },
   howItWorks,
   faq,
+  statsSection,
   seo,
   trustedBy {
     title,

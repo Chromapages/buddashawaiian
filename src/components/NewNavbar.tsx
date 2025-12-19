@@ -31,6 +31,26 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle, navigation }: NewNavbar
 
     const isActive = (path: string) => pathname === path;
 
+    const getHeaderCtaClasses = (style?: string) => {
+        switch (style) {
+            case "dark-teal":
+                return "bg-buddas-teal-dark text-white hover:bg-buddas-teal hover:shadow-teal-500/20";
+            case "gold":
+                return "bg-buddas-gold text-buddas-brown hover:bg-buddas-gold-dark hover:text-white hover:shadow-gold-500/20";
+            case "cream":
+                return "bg-buddas-cream text-buddas-brown hover:bg-stone-200 hover:shadow-stone-500/10";
+            case "brown":
+                return "bg-buddas-brown text-white hover:bg-buddas-brown-dark hover:shadow-stone-900/20";
+            case "orange":
+                return "bg-buddas-orange text-white hover:bg-orange-700 hover:shadow-orange-500/20";
+            case "teal":
+            default:
+                return "bg-buddas-teal text-white hover:bg-buddas-teal-dark hover:shadow-teal-500/20";
+        }
+    };
+
+    const ctaClasses = getHeaderCtaClasses(ctaStyle);
+
     // Mobile Menu Variants
     const menuVariants = {
         closed: {
@@ -127,7 +147,7 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle, navigation }: NewNavbar
                         <Button
                             asChild
                             variant="default"
-                            className="h-12 px-8 rounded-xl text-sm font-bold uppercase tracking-wide shadow-lg hover:bg-buddas-teal-dark hover:shadow-teal-500/20 active:scale-95 transition-all duration-300"
+                            className={`h-12 px-8 rounded-xl text-sm font-bold uppercase tracking-wide shadow-lg active:scale-95 transition-all duration-300 ${ctaClasses}`}
                         >
                             <Link href={orderUrl || defaultOrderUrl} target="_blank">
                                 Order Online
@@ -202,7 +222,7 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle, navigation }: NewNavbar
                                 <Button
                                     asChild
                                     variant="default"
-                                    className="h-14 w-full rounded-2xl text-lg font-bold uppercase tracking-wider shadow-lg hover:bg-buddas-teal-dark hover:shadow-teal-500/20"
+                                    className={`h-14 w-full rounded-2xl text-lg font-bold uppercase tracking-wider shadow-lg active:scale-95 transition-all duration-300 ${ctaClasses}`}
                                 >
                                     <Link href={orderUrl || defaultOrderUrl} target="_blank" onClick={() => setIsMobileMenuOpen(false)}>
                                         Order Online
