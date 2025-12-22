@@ -28,7 +28,7 @@ export function MenuCategoryNav({ categories }: MenuCategoryNavProps) {
             }
         };
 
-        window.addEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, [categories]);
 

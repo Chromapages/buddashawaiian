@@ -9,14 +9,68 @@ import { MICROCOPY } from "@/lib/microcopy";
 
 interface NewArrivalsSlideshowProps {
     items: any[];
+    isLoading?: boolean;
 }
 
-export function NewArrivalsSlideshow({ items }: NewArrivalsSlideshowProps) {
+function NewArrivalsSlideshowSkeleton() {
+    return (
+        <section className="relative w-full h-[85svh] md:h-[800px] bg-buddas-teal-dark overflow-hidden text-white motion-safe:animate-pulse">
+            <div className="w-full h-full flex flex-col md:flex-row">
+                {/* Left Image Section Skeleton */}
+                <div className="w-full md:w-1/2 h-[40%] md:h-full relative bg-buddas-teal-dark/80">
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-zinc-950 hidden md:block" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent md:hidden" />
+                </div>
+
+                {/* Right Content Section Skeleton */}
+                <div className="w-full md:w-1/2 h-[60%] md:h-full flex flex-col justify-center px-6 md:px-20 lg:px-24 py-8 md:py-12 bg-buddas-teal-dark">
+                    <div className="max-w-xl space-y-6 md:space-y-8">
+                        {/* Badge Skeleton */}
+                        <div className="w-32 h-8 bg-buddas-gold/10 rounded-full" />
+
+                        {/* Title Skeleton */}
+                        <div className="space-y-3">
+                            <div className="w-3/4 h-12 md:h-16 bg-white/10 rounded-lg" />
+                            <div className="w-1/2 h-12 md:h-16 bg-white/10 rounded-lg" />
+                        </div>
+
+                        {/* Description Skeleton */}
+                        <div className="space-y-2">
+                            <div className="w-full h-5 bg-white/5 rounded" />
+                            <div className="w-2/3 h-5 bg-white/5 rounded" />
+                        </div>
+
+                        {/* Price & CTA Skeleton */}
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8 pt-4">
+                            <div className="space-y-2">
+                                <div className="w-12 h-3 bg-buddas-cream/20 rounded" />
+                                <div className="w-24 h-12 bg-buddas-gold/20 rounded" />
+                            </div>
+                            <div className="h-12 w-px bg-white/10 hidden sm:block" />
+                            <div className="w-full sm:w-40 h-14 bg-buddas-gold/20 rounded-lg" />
+                        </div>
+                    </div>
+
+                    {/* Pagination Skeleton */}
+                    <div className="flex items-end gap-4 mt-auto md:mt-16 pb-6 md:pb-0 justify-between md:justify-start w-full">
+                        <div className="flex items-baseline gap-2">
+                            <div className="w-8 h-8 bg-buddas-gold/20 rounded" />
+                            <div className="w-12 h-4 bg-white/10 rounded" />
+                        </div>
+                        <div className="h-[2px] w-24 bg-white/10 rounded-full" />
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+export function NewArrivalsSlideshow({ items, isLoading }: NewArrivalsSlideshowProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
 
     // Limit to 3 items
-    const slides = items.slice(0, 3);
+    const slides = items?.slice(0, 3) || [];
 
     // Auto-advance (Desktop Only)
     useEffect(() => {
@@ -49,6 +103,11 @@ export function NewArrivalsSlideshow({ items }: NewArrivalsSlideshowProps) {
         }
     };
 
+    // Show skeleton if explicitly loading
+    if (isLoading) {
+        return <NewArrivalsSlideshowSkeleton />;
+    }
+
     if (!slides.length) return null;
     const currentSlide = slides[currentIndex];
 
@@ -57,48 +116,45 @@ export function NewArrivalsSlideshow({ items }: NewArrivalsSlideshowProps) {
         ? urlFor(currentSlide.image).width(1600).height(1600).fit("crop").url()
         : null;
 
-    // --- Animation Variants ---
+    // --- Animation Variants (Simplified) ---
 
-    // Staggers the text elements
+    // Staggers the text elements - reduced delays
     const contentContainerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.2
+                staggerChildren: 0.05,
+                delayChildren: 0.1
             }
         },
         exit: {
             opacity: 0,
-            transition: { duration: 0.2 }
+            transition: { duration: 0.15 }
         }
     };
 
-    // "Fade in, slide in, blur in" effect
+    // Simple fade/slide - removed blur filter (heavy on GPU)
     const textItemVariants: Variants = {
         hidden: {
             opacity: 0,
-            y: 20,
-            filter: "blur(10px)"
+            y: 15
         },
         visible: {
             opacity: 1,
             y: 0,
-            filter: "blur(0px)",
             transition: {
-                duration: 0.8,
-                ease: [0.25, 0.1, 0.25, 1] // Aloha Motion Ease
+                duration: 0.4,
+                ease: "easeOut"
             }
         }
     };
 
     const imageVariants: Variants = {
-        initial: { scale: 1.1, opacity: 0 },
+        initial: { opacity: 0 },
         animate: {
-            scale: 1,
             opacity: 1,
-            transition: { duration: 1.2, ease: "easeOut" }
+            transition: { duration: 0.5, ease: "easeOut" }
         },
         exit: { opacity: 0 }
     };

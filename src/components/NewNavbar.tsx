@@ -3,18 +3,52 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Phone, Home, Utensils, ShoppingBag, MapPin } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X, Phone, Home, Utensils, ShoppingBag, MapPin, ChefHat } from "lucide-react";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 interface NewNavbarProps {
     logoUrl?: string;
     orderUrl?: string;
     ctaStyle?: string;
+    orderUrl?: string;
+    ctaStyle?: string;
     navigation?: any[];
 }
 
+function NewNavbarSkeleton() {
+    return (
+        <div className="sticky top-0 z-50 w-full bg-buddas-cream py-4 shadow-none">
+            <div className="w-full px-6 lg:px-12 xl:px-16">
+                <header className="flex items-center justify-between h-14 md:h-16 motion-safe:animate-pulse">
+                    {/* Logo */}
+                    <div className="w-32 h-10 bg-buddas-brown/10 rounded-lg" />
+
+                    {/* Desktop Nav Skeleton */}
+                    <div className="hidden md:flex flex-1 justify-end items-center gap-6">
+                        <div className="flex gap-2">
+                            {[1, 2, 3, 4].map(i => (
+                                <div key={i} className="w-24 h-10 bg-buddas-brown/5 rounded-full" />
+                            ))}
+                        </div>
+                        <div className="h-8 w-px bg-buddas-brown/10 mx-2" />
+                        <div className="w-36 h-12 bg-buddas-teal/20 rounded-full" />
+                    </div>
+
+                    {/* Mobile Hamburger Skeleton */}
+                    <div className="md:hidden w-10 h-10 bg-buddas-brown/10 rounded-lg" />
+                </header>
+            </div>
+        </div>
+    );
+}
+
 export function NewNavbar({ logoUrl, orderUrl, ctaStyle, navigation }: NewNavbarProps) {
+    // Should render skeleton if navigation connects are missing (assuming fetching state implies empty nav initially)
+    if (!navigation || navigation.length === 0) {
+        return <NewNavbarSkeleton />;
+    }
+
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
     const defaultOrderUrl = "https://order.toasttab.com/online/buddas-hawaiian-bbq-pleasant-grove-pg-123-state-st";
@@ -95,78 +129,69 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle, navigation }: NewNavbar
     }, [isMobileMenuOpen]);
 
     return (
-        <div className="sticky top-0 z-50 w-full bg-buddas-cream dark:bg-zinc-900 border-b-0 shadow-sm transition-all duration-300">
+        <div className="sticky top-0 z-50 w-full transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-buddas-cream py-2 shadow-md">
             <div className="w-full px-6 lg:px-12 xl:px-16">
-                <header className="flex items-center justify-between py-4">
+                <header className="flex items-center justify-between h-14 md:h-16 transition-all duration-500">
                     {/* Logo Section */}
                     <div className="flex items-center gap-2 text-black dark:text-white">
                         <Link href="/" className="flex items-center gap-2 group relative">
-                            {/* Subtle logo lift on hover */}
-                            <motion.div
-                                whileHover={{ y: -1 }}
-                                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                            >
-                                {logoUrl && (
-                                    <motion.img
-                                        src={logoUrl}
-                                        alt="Buddas Hawaiian"
-                                        className="h-10 lg:h-12 w-auto object-contain drop-shadow-sm"
-                                        whileHover={{ scale: 1.05 }}
-                                        transition={{
-                                            type: "spring",
-                                            stiffness: 400,
-                                            damping: 10,
-                                            ease: alohaEase as any
-                                        }}
-                                    />
-                                )}
-                            </motion.div>
+                            {logoUrl && (
+                                <img
+                                    src={logoUrl}
+                                    alt="Buddas Hawaiian"
+                                    className="h-10 lg:h-12 w-auto object-contain drop-shadow-sm transition-transform hover:scale-105"
+                                />
+                            )}
                         </Link>
                     </div>
 
-                    {/* Desktop Navigation */}
+                    {/* Desktop Navigation - M3 Expressive Pills */}
                     <div className="hidden md:flex flex-1 justify-end items-center gap-6">
-                        <AnimatePresence>
-                            <nav aria-label="Main navigation" className="flex items-center gap-2 p-1 bg-white rounded-2xl shadow-md border border-buddas-brown/10">
+                        <LayoutGroup>
+                            <nav aria-label="Main navigation" className="flex items-center gap-1">
                                 {navigation?.map((item: any) => {
                                     const active = isActive(item.url);
                                     return (
                                         <Link
                                             key={item.url}
                                             href={item.url}
-                                            className={`relative px-5 py-2.5 rounded-lg text-sm font-dm-sans font-medium tracking-wide transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-buddas-teal focus:ring-offset-2
+                                            className={`relative px-6 py-2.5 rounded-full text-base font-dm-sans transition-colors duration-200 group focus:outline-none focus:ring-2 focus:ring-buddas-teal focus:ring-offset-2
                                             ${active
-                                                    ? "text-buddas-teal-dark bg-white shadow-[0_2px_8px_-2px_rgba(0,0,0,0.1),inset_0_1px_0_0_rgba(255,255,255,1)] ring-1 ring-black/5"
-                                                    : "text-buddas-brown hover:text-buddas-teal-dark hover:bg-white/60 hover:shadow-sm"
+                                                    ? "text-buddas-teal-dark font-bold"
+                                                    : "text-buddas-brown font-medium hover:text-buddas-teal-dark"
                                                 }
                                         `}
                                         >
+                                            {active && (
+                                                <motion.div
+                                                    layoutId="navbar-pill"
+                                                    className="absolute inset-0 bg-buddas-teal/10 rounded-full"
+                                                    transition={{
+                                                        type: "spring",
+                                                        stiffness: 400,
+                                                        damping: 25
+                                                    }}
+                                                />
+                                            )}
+                                            {/* Hover State Layer */}
+                                            {!active && (
+                                                <div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/5 transition-colors duration-200" />
+                                            )}
+
                                             <span className="relative z-10 flex items-center gap-2">
                                                 {item.label}
-                                                {active && (
-                                                    <motion.div
-                                                        layoutId="active-dot"
-                                                        className="w-1.5 h-1.5 rounded-full bg-buddas-teal"
-                                                        transition={{
-                                                            type: "spring",
-                                                            stiffness: 500,
-                                                            damping: 30,
-                                                            ease: alohaEase as any
-                                                        }}
-                                                    />
-                                                )}
                                             </span>
                                         </Link>
                                     );
                                 })}
                             </nav>
-                        </AnimatePresence>
-                        <div className="hidden md:block h-8 w-px bg-stone-300 dark:bg-stone-700 mx-2" />
+                        </LayoutGroup>
+                        <div className="hidden md:block h-8 w-px bg-buddas-brown/10 mx-2" />
 
                         <Button
                             asChild
                             variant="default"
-                            className={`hidden md:inline-flex h-12 px-8 rounded-lg text-sm font-bold uppercase tracking-wide shadow-md hover:shadow-lg active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] focus:ring-2 focus:ring-buddas-teal focus:ring-offset-2 ${ctaClasses}`}
+                            className={`hidden md:inline-flex h-12 px-8 rounded-full text-sm font-bold uppercase tracking-wide shadow-md hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] focus:ring-2 focus:ring-buddas-teal focus:ring-offset-2 ${ctaClasses}`}
                         >
                             <Link href={orderUrl || defaultOrderUrl} target="_blank">
                                 Order Online
@@ -269,10 +294,10 @@ export function NewNavbar({ logoUrl, orderUrl, ctaStyle, navigation }: NewNavbar
                     </Link>
                 </div>
 
-                {/* Locations */}
-                <Link href="/#locations" className={`flex flex-col items-center justify-center gap-1 h-full w-full ${pathname === "/#locations" ? "text-buddas-teal" : "text-buddas-brown/60 hover:text-buddas-brown"}`}>
-                    <MapPin className="w-6 h-6" strokeWidth={2} />
-                    <span className="text-[10px] font-bold uppercase tracking-tight">Find Us</span>
+                {/* Catering */}
+                <Link href="/catering" className={`flex flex-col items-center justify-center gap-1 h-full w-full ${pathname === "/catering" ? "text-buddas-teal" : "text-buddas-brown/60 hover:text-buddas-brown"}`}>
+                    <ChefHat className="w-6 h-6" strokeWidth={pathname === "/catering" ? 2.5 : 2} />
+                    <span className="text-[10px] font-bold uppercase tracking-tight">Catering</span>
                 </Link>
 
                 {/* More / Menu Toggle */}

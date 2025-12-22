@@ -19,8 +19,8 @@ const containerVariants = {
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.15,
-            delayChildren: 0.1
+            staggerChildren: 0.08,
+            delayChildren: 0.05
         }
     }
 };
@@ -28,16 +28,14 @@ const containerVariants = {
 const itemVariants = {
     hidden: {
         opacity: 0,
-        y: 20,
-        filter: "blur(10px)"
+        y: 15
     },
     visible: {
         opacity: 1,
         y: 0,
-        filter: "blur(0px)",
         transition: {
-            duration: 0.8,
-            ease: [0.25, 0.1, 0.25, 1] as any // Aloha Motion
+            duration: 0.4,
+            ease: [0.25, 0.1, 0.25, 1]
         }
     }
 };

@@ -2,8 +2,7 @@
 
 import { ArrowRight, CalendarDays, Utensils, HeartHandshake } from "lucide-react";
 import Link from "next/link";
-import { useRef } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useRef, useState } from "react";
 
 interface CateringData {
     // Homepage Teaser Fields (from cateringPage schema)
@@ -35,13 +34,17 @@ interface NewCateringSectionProps {
 }
 
 export function NewCateringSection({ cateringData }: NewCateringSectionProps) {
-    const scrollContainerRef = useRef(null);
-    const { scrollXProgress } = useScroll({ container: scrollContainerRef });
-    const scaleX = useSpring(scrollXProgress, {
-        stiffness: 100,
-        damping: 30,
-        restDelta: 0.001
-    });
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [scrollProgress, setScrollProgress] = useState(0);
+
+    const handleScroll = () => {
+        if (!scrollContainerRef.current) return;
+        const container = scrollContainerRef.current;
+        const maxScroll = container.scrollWidth - container.clientWidth;
+        if (maxScroll > 0) {
+            setScrollProgress((container.scrollLeft / maxScroll) * 100);
+        }
+    };
 
     const cards = [
         {
@@ -110,6 +113,7 @@ export function NewCateringSection({ cateringData }: NewCateringSectionProps) {
 
             <div
                 ref={scrollContainerRef}
+                onScroll={handleScroll}
                 className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-8 -mx-4 px-4 lg:grid lg:grid-cols-3 lg:gap-6 2xl:gap-8 lg:pb-0 lg:mx-0 lg:px-0 no-scrollbar relative"
             >
                 {cards.map((card) => (
@@ -156,9 +160,9 @@ export function NewCateringSection({ cateringData }: NewCateringSectionProps) {
 
             {/* Mobile Live Progress Bar */}
             <div className="lg:hidden h-1 w-full bg-buddas-brown/5 rounded-full -mt-2 mb-4 overflow-hidden max-w-[200px] mx-auto">
-                <motion.div
-                    className="h-full bg-buddas-brown/40"
-                    style={{ scaleX, transformOrigin: 'left' }}
+                <div
+                    className="h-full bg-buddas-brown/40 transition-all duration-100"
+                    style={{ width: `${scrollProgress}%` }}
                 />
             </div>
         </section>

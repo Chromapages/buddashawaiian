@@ -43,7 +43,7 @@ export function MenuItemCard({
                         src={urlFor(image).width(600).height(450).url()}
                         alt={name}
                         fill
-                        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-105"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     {isSignature && (

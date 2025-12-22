@@ -3,7 +3,6 @@
 import { Star, Quote, X, Loader2, Plus, ChevronLeft, ChevronRight, Check, BadgeCheck, Utensils, Heart, Clock } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 
 interface Testimonial {
@@ -44,13 +43,17 @@ export function NewTestimonialsSection({ testimonials = [] }: NewTestimonialsSec
     const [isPaused, setIsPaused] = useState(false);
 
     // Mobile Scroll Progress
-    const scrollContainerRef = useRef(null);
-    const { scrollXProgress } = useScroll({ container: scrollContainerRef });
-    const scaleX = useSpring(scrollXProgress, {
-        stiffness: 100,
-        damping: 30,
-        restDelta: 0.001
-    });
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [scrollProgress, setScrollProgress] = useState(0);
+
+    const handleScroll = () => {
+        if (!scrollContainerRef.current) return;
+        const container = scrollContainerRef.current;
+        const maxScroll = container.scrollWidth - container.clientWidth;
+        if (maxScroll > 0) {
+            setScrollProgress((container.scrollLeft / maxScroll) * 100);
+        }
+    };
 
     // If no testimonials, use fallbacks
     // Increased slice limit to 8 to allow for scrolling on mobile
@@ -329,9 +332,9 @@ export function NewTestimonialsSection({ testimonials = [] }: NewTestimonialsSec
                 {/* Mobile Progress Bar */}
                 <div className="md:hidden px-6 mb-6">
                     <div className="h-1 w-full bg-buddas-brown/10 rounded-full overflow-hidden">
-                        <motion.div
-                            className="h-full bg-buddas-teal"
-                            style={{ scaleX, transformOrigin: "left" }}
+                        <div
+                            className="h-full bg-buddas-teal transition-all duration-100"
+                            style={{ width: `${scrollProgress}%` }}
                         />
                     </div>
                 </div>
@@ -350,6 +353,7 @@ export function NewTestimonialsSection({ testimonials = [] }: NewTestimonialsSec
                 {/* Mobile: Horizontal Snap Scroll */}
                 <div
                     ref={scrollContainerRef}
+                    onScroll={handleScroll}
                     className="flex md:hidden overflow-x-auto snap-x snap-mandatory gap-4 pb-8 px-6 -mx-0 no-scrollbar"
                 >
                     {displayTestimonials.map((item, idx) => (

@@ -1,10 +1,10 @@
 "use client";
 
-import { ShoppingBag, ArrowRight } from "lucide-react";
+import { ShoppingBag, ArrowRight, Star, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { urlFor } from "@/sanity/lib/image";
 import { Button } from "@/components/ui/button";
 import { MICROCOPY } from "@/lib/microcopy";
@@ -13,7 +13,54 @@ interface NewHeroProps {
     heroSlides?: any[];
 }
 
+function NewHeroSkeleton() {
+    return (
+        <section className="relative w-full overflow-hidden min-h-[85svh] lg:min-h-[800px] 2xl:min-h-[900px] flex items-center bg-zinc-900 motion-safe:animate-pulse">
+            <div className="absolute inset-0 bg-buddas-brown/20" />
+
+            <div className="relative z-10 w-full max-w-[1280px] xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-24 pb-16 md:pb-48 md:pt-44 lg:pt-48 grid lg:grid-cols-2 gap-12 2xl:gap-16 items-center">
+                <div className="space-y-8 max-w-2xl 2xl:max-w-3xl p-6 sm:p-0">
+                    {/* Badge */}
+                    <div className="w-32 h-6 bg-buddas-gold/20 rounded-full" />
+
+                    {/* Title */}
+                    <div className="space-y-4">
+                        <div className="w-3/4 h-12 sm:h-16 lg:h-20 bg-white/10 rounded-xl" />
+                        <div className="w-1/2 h-12 sm:h-16 lg:h-20 bg-white/10 rounded-xl" />
+                    </div>
+
+                    {/* Subtitle */}
+                    <div className="space-y-3 pt-2">
+                        <div className="w-full sm:w-2/3 h-6 bg-white/5 rounded-lg" />
+                        <div className="w-3/4 sm:w-1/2 h-6 bg-white/5 rounded-lg" />
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 pt-6">
+                        <div className="w-full sm:w-40 h-14 bg-buddas-teal/20 rounded-lg" />
+                        <div className="w-full sm:w-40 h-14 bg-white/10 rounded-lg" />
+                    </div>
+
+                    {/* Social Proof */}
+                    <div className="flex items-center gap-4 pt-4">
+                        <div className="flex -space-x-2">
+                            {[1, 2, 3, 4, 5].map((i) => (
+                                <div key={i} className="w-6 h-6 rounded-full bg-buddas-gold/20 border-2 border-transparent" />
+                            ))}
+                        </div>
+                        <div className="w-32 h-4 bg-white/10 rounded" />
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
 export function NewHero({ heroSlides }: NewHeroProps) {
+    if (!heroSlides || heroSlides.length === 0) {
+        return <NewHeroSkeleton />;
+    }
+
     // Use data from the first slide as primary content, or default to null
     const slide = heroSlides && heroSlides.length > 0 ? heroSlides[0] : null;
 
@@ -42,10 +89,6 @@ export function NewHero({ heroSlides }: NewHeroProps) {
         }
     }, [slide?.badge]);
 
-    // Parallax Background Logic
-    const { scrollY } = useScroll();
-    const y = useTransform(scrollY, [0, 1000], [0, 300]); // Move background slower than scroll
-
     // Buttons
     const primaryCtaLabel = slide?.primaryCtaLabel ?? "Explore Now";
     const primaryCtaLink = slide?.primaryCtaLink ?? "/menu";
@@ -71,8 +114,9 @@ export function NewHero({ heroSlides }: NewHeroProps) {
     return (
         <section className="relative w-full overflow-hidden min-h-[85svh] lg:min-h-[800px] 2xl:min-h-[900px] flex items-center bg-zinc-900">
             {/* Background Image with Overlay */}
-            {/* Parallax Background Image with Overlay */}
-            <motion.div style={{ y }} className="absolute inset-0 z-0 select-none">
+            <div
+                className="absolute inset-0 z-0 select-none"
+            >
                 <Image
                     src={mainImageSrc}
                     alt={slide?.image?.alt || "Buddas Hawaiian hero background - island comfort food"}
@@ -83,7 +127,7 @@ export function NewHero({ heroSlides }: NewHeroProps) {
                 />
                 {/* Dark Gradient Overlay for Readability */}
                 <div className="absolute inset-0 bg-gradient-to-r from-buddas-brown/85 via-buddas-brown/50 to-transparent" />
-            </motion.div>
+            </div>
 
             {/* Main Content */}
             <div className="relative z-10 w-full max-w-[1280px] xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-24 pb-16 md:pb-48 md:pt-44 lg:pt-48 grid lg:grid-cols-2 gap-12 2xl:gap-16 items-center">
@@ -92,20 +136,20 @@ export function NewHero({ heroSlides }: NewHeroProps) {
                 <div className="space-y-8 max-w-2xl 2xl:max-w-3xl backdrop-blur-sm bg-black/10 sm:backdrop-blur-none sm:bg-transparent p-6 sm:p-0 rounded-2xl sm:rounded-none border border-white/5 sm:border-none">
 
                     {/* Badge: Dynamic on Mobile, Static on Desktop */}
-                    <span className="sm:hidden inline-flex items-center px-4 py-1.5 rounded-full bg-buddas-gold text-buddas-brown text-xs font-bold shadow-sm uppercase tracking-wide animate-in fade-in duration-300 delay-100">
+                    <span className="sm:hidden inline-flex items-center px-4 py-1.5 rounded-full bg-buddas-gold text-buddas-brown text-xs font-bold shadow-sm uppercase tracking-wide">
                         {greeting}
                     </span>
-                    <span className="hidden sm:inline-flex items-center px-4 py-1.5 rounded-full bg-buddas-gold text-buddas-brown text-xs font-bold shadow-sm uppercase tracking-wide animate-in fade-in duration-300 delay-100">
+                    <span className="hidden sm:inline-flex items-center px-4 py-1.5 rounded-full bg-buddas-gold text-buddas-brown text-xs font-bold shadow-sm uppercase tracking-wide">
                         {heroBadge}
                     </span>
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl font-semibold text-buddas-cream tracking-[-0.02em] leading-tight drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] font-poppins animate-in slide-in-from-bottom-8 fade-in duration-300 delay-200">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl font-semibold text-buddas-cream tracking-[-0.02em] leading-tight drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] font-poppins">
                         {heroTitle}
                     </h1>
-                    <p className="text-xl md:text-2xl 2xl:text-3xl text-buddas-cream/80 font-dm-sans font-medium leading-relaxed max-w-sm sm:max-w-xl lg:max-w-2xl opacity-95 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom-6 fade-in duration-300 delay-300">
+                    <p className="text-xl md:text-2xl 2xl:text-3xl text-buddas-cream/80 font-dm-sans font-medium leading-relaxed max-w-sm sm:max-w-xl lg:max-w-2xl opacity-95 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
                         {heroSubtitle}
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-in slide-in-from-bottom-4 fade-in duration-300 delay-400">
+                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
                         <Button
                             asChild
                             variant="default" // Teal Primary
@@ -135,8 +179,17 @@ export function NewHero({ heroSlides }: NewHeroProps) {
                         </Button>
                     </div>
 
-                    <div className="flex items-center gap-4 pt-4 text-teal-100/80 text-base font-medium animate-in fade-in duration-300 delay-500">
-                        <p className="drop-shadow-sm border-l-2 border-buddas-orange pl-4">{MICROCOPY.socialProof}</p>
+                    <div className="flex items-center gap-4 pt-4">
+                        <div className="flex -space-x-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <div key={star} className="w-6 h-6 rounded-full bg-buddas-gold flex items-center justify-center border-2 border-buddas-brown">
+                                    <Star className="w-3 h-3 text-buddas-brown fill-buddas-brown" />
+                                </div>
+                            ))}
+                        </div>
+                        <p className="text-teal-100/90 text-sm font-medium drop-shadow-sm">
+                            <span className="font-bold text-white">4.9/5</span> from 2,000+ Happy Locals
+                        </p>
                     </div>
                 </div>
 
@@ -145,6 +198,20 @@ export function NewHero({ heroSlides }: NewHeroProps) {
                     {/* Content removed to let background shine through, as requested */}
                 </div>
             </div >
+
+            {/* Scroll Indicator */}
+            <div
+                className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-300"
+            >
+                <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 font-medium">Scroll</span>
+                <div
+                    className="w-6 h-10 rounded-full border border-white/20 flex items-start justify-center p-1"
+                >
+                    <div
+                        className="w-1 h-1 rounded-full bg-white animate-bounce"
+                    />
+                </div>
+            </div>
 
             {/* Wave Dividers */}
         </section >

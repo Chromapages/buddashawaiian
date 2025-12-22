@@ -49,7 +49,7 @@ export function MenuCard({ item, onClick }: MenuCardProps) {
                         src={imageUrl}
                         alt={item.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-buddas-brown/20 bg-buddas-cream">

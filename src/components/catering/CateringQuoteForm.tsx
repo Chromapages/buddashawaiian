@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Loader2, Calendar, Users, FileText, CheckCircle } from "lucide-react";
+import { Loader2, Calendar, Users, FileText, CheckCircle, ChevronRight, ChevronLeft, Minus, Plus, PartyPopper, Briefcase, Heart, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface FormErrors {
     firstName?: string;
@@ -16,321 +17,412 @@ interface FormErrors {
     message?: string;
 }
 
+const EVENT_TYPES = [
+    { id: "Corporate Lunch", label: "Corporate Lunch", icon: Briefcase },
+    { id: "Wedding / Rehearsal", label: "Wedding", icon: Heart },
+    { id: "Private Party", label: "Private Party", icon: PartyPopper },
+    { id: "Community Event", label: "Community", icon: Users },
+    { id: "Other", label: "Other", icon: Sparkles },
+];
+
 export function CateringQuoteForm() {
+    const [step, setStep] = useState(1);
+    const [direction, setDirection] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [errors, setErrors] = useState<FormErrors>({});
     const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-    const validate = (formData: FormData): FormErrors => {
-        const newErrors: FormErrors = {};
-        const email = formData.get("email") as string;
-        const firstName = formData.get("firstName") as string;
-        const lastName = formData.get("lastName") as string;
-        const phone = formData.get("phone") as string;
-        const eventType = formData.get("eventType") as string;
-        const guestCount = formData.get("guestCount") as string;
-        const eventDate = formData.get("eventDate") as string;
+    // Form State (Controlled for easier masking/stepper)
+    const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        eventType: "",
+        guestCount: "30", // Default nice styling
+        eventDate: "",
+        message: ""
+    });
 
-        if (!firstName?.trim()) newErrors.firstName = "First name is required";
-        if (!lastName?.trim()) newErrors.lastName = "Last name is required";
+    const formRef = useRef<HTMLFormElement>(null);
 
-        if (!email?.trim()) {
-            newErrors.email = "Email is required";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            newErrors.email = "Please enter a valid email address";
-        }
+    // --- Helpers ---
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
 
-        if (!phone?.trim()) {
-            newErrors.phone = "Phone number is required";
-        }
+        if (name === 'phone') {
+            // Simple Phone Masking (XXX) XXX-XXXX
+            const numbers = value.replace(/\D/g, "");
+            let formatted = numbers;
+            if (numbers.length > 0) formatted = `(${numbers.slice(0, 3)}`;
+            if (numbers.length > 3) formatted += `) ${numbers.slice(3, 6)}`;
+            if (numbers.length > 6) formatted += `-${numbers.slice(6, 10)}`;
 
-        if (!eventType || eventType === "") newErrors.eventType = "Please select an event type";
-
-        if (!guestCount) {
-            newErrors.guestCount = "Guest count is required";
-        } else if (parseInt(guestCount) < 10) {
-            newErrors.guestCount = "Minimum 10 guests required";
-        }
-
-        if (!eventDate) newErrors.eventDate = "Event date is required";
-
-        return newErrors;
-    };
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setErrors({});
-
-        const formData = new FormData(e.currentTarget);
-        const newErrors = validate(formData);
-
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            const allTouched: Record<string, boolean> = {};
-            formData.forEach((_, key) => { allTouched[key] = true; });
-            setTouched(allTouched);
-            setIsSubmitting(false);
+            setFormData(prev => ({ ...prev, [name]: formatted }));
             return;
         }
 
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        setIsSubmitting(false);
-        setIsSuccess(true);
-        (e.target as HTMLFormElement).reset();
+        setFormData(prev => ({ ...prev, [name]: value }));
+        if (errors[name as keyof FormErrors]) {
+            setErrors(prev => ({ ...prev, [name]: undefined }));
+        }
     };
 
-    const handleBlur = (field: string) => {
-        setTouched((prev) => ({ ...prev, [field]: true }));
+    const updateGuests = (increment: number) => {
+        const current = parseInt(formData.guestCount) || 0;
+        const potential = current + increment;
+        const newValue = Math.max(10, potential).toString();
+        setFormData(prev => ({ ...prev, guestCount: newValue }));
+    };
+
+    const validateStep = (currentStep: number): boolean => {
+        const newErrors: FormErrors = {};
+        let isValid = true;
+
+        if (currentStep === 1) {
+            if (!formData.eventType) newErrors.eventType = "Please select an event type";
+            if (!formData.eventDate) newErrors.eventDate = "Please choose a date";
+            if (!formData.guestCount || parseInt(formData.guestCount) < 10) newErrors.guestCount = "Min 10 guests";
+        }
+
+        if (currentStep === 2) {
+            if (!formData.firstName.trim()) newErrors.firstName = "Required";
+            if (!formData.lastName.trim()) newErrors.lastName = "Required";
+            if (!formData.email.trim()) {
+                newErrors.email = "Required";
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+                newErrors.email = "Invalid email";
+            }
+            if (!formData.phone.trim()) newErrors.phone = "Required";
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            // Shake effect or feedback?
+            isValid = false;
+        }
+
+        return isValid;
+    };
+
+    const handleNext = () => {
+        if (validateStep(1)) {
+            setDirection(1);
+            setStep(2);
+        }
+    };
+
+    const handleBack = () => {
+        setDirection(-1);
+        setStep(1);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateStep(2)) return;
+
+        setIsSubmitting(true);
+        // Simulate API
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setIsSubmitting(false);
+        setIsSuccess(true);
+    };
+
+    // --- Animations ---
+    const variants = {
+        enter: (direction: number) => ({
+            x: direction > 0 ? "100%" : "-100%",
+            opacity: 0,
+            scale: 0.95
+        }),
+        center: {
+            zIndex: 1,
+            x: 0,
+            opacity: 1,
+            scale: 1,
+        },
+        exit: (direction: number) => ({
+            zIndex: 0,
+            x: direction < 0 ? "100%" : "-100%",
+            opacity: 0,
+            scale: 0.95
+        })
     };
 
     if (isSuccess) {
         return (
-            <div className="bg-white rounded-xl p-8 border border-buddas-brown/10 text-center shadow-lg animate-in fade-in zoom-in duration-300">
-                <div className="w-16 h-16 bg-buddas-teal/10 rounded-full flex items-center justify-center mx-auto mb-6 text-buddas-teal">
-                    <CheckCircle className="w-8 h-8" />
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center justify-center p-8 text-center h-[50vh]"
+            >
+                <div className="w-20 h-20 bg-buddas-teal/10 rounded-full flex items-center justify-center mb-6 text-buddas-teal">
+                    <PartyPopper className="w-10 h-10 animate-bounce" />
                 </div>
-                <h3 className="text-2xl font-semibold text-buddas-brown font-poppins mb-4">Mahalo! Request Received.</h3>
+                <h3 className="text-2xl font-bold text-buddas-brown font-poppins mb-2">Quote Requested!</h3>
                 <p className="text-buddas-brown/70 font-dm-sans mb-8">
-                    We've received your catering inquiry. Our team will review your details and get back to you within 24 hours with a custom quote.
+                    We've got your details. Our team will verify availability and send you a custom proposal shortly.
                 </p>
-                <Button
-                    onClick={() => setIsSuccess(false)}
-                    variant="outline"
-                    className="border-buddas-teal text-buddas-teal hover:bg-buddas-teal/5 uppercase tracking-wide font-bold"
-                >
-                    Send Another Request
+                <Button onClick={() => { setIsSuccess(false); setStep(1); setFormData({ ...formData, eventType: "" }); }} variant="outline">
+                    Start New Quote
                 </Button>
-            </div>
+            </motion.div>
         );
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <label htmlFor="firstName" className="block text-sm font-medium text-buddas-brown uppercase tracking-wide font-dm-sans">
-                        First Name <span className="text-buddas-orange">*</span>
-                    </label>
-                    <input
-                        id="firstName"
-                        name="firstName"
-                        type="text"
-                        placeholder="e.g. Kai"
-                        className={cn(
-                            "w-full bg-white border border-buddas-brown/20 rounded-lg px-5 py-4 text-base text-buddas-brown placeholder-buddas-brown/30 outline-none transition-all duration-200 font-dm-sans",
-                            "focus:border-buddas-teal focus:border-2 focus:bg-white focus:shadow-[0_0_0_4px_rgba(84,191,165,0.1)]",
-                            errors.firstName && touched.firstName && "border-buddas-orange focus:border-buddas-orange"
-                        )}
-                        onBlur={() => handleBlur("firstName")}
-                    />
-                    {errors.firstName && touched.firstName && (
-                        <p className="text-buddas-orange text-xs font-medium animate-in slide-in-from-top-1">{errors.firstName}</p>
-                    )}
-                </div>
-
-                <div className="space-y-2">
-                    <label htmlFor="lastName" className="block text-sm font-medium text-buddas-brown uppercase tracking-wide font-dm-sans">
-                        Last Name <span className="text-buddas-orange">*</span>
-                    </label>
-                    <input
-                        id="lastName"
-                        name="lastName"
-                        type="text"
-                        placeholder="e.g. Loa"
-                        className={cn(
-                            "w-full bg-white border border-buddas-brown/20 rounded-lg px-5 py-4 text-base text-buddas-brown placeholder-buddas-brown/30 outline-none transition-all duration-200 font-dm-sans",
-                            "focus:border-buddas-teal focus:border-2 focus:bg-white focus:shadow-[0_0_0_4px_rgba(84,191,165,0.1)]",
-                            errors.lastName && touched.lastName && "border-buddas-orange focus:border-buddas-orange"
-                        )}
-                        onBlur={() => handleBlur("lastName")}
-                    />
-                    {errors.lastName && touched.lastName && (
-                        <p className="text-buddas-orange text-xs font-medium animate-in slide-in-from-top-1">{errors.lastName}</p>
-                    )}
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <label htmlFor="email" className="block text-sm font-medium text-buddas-brown uppercase tracking-wide font-dm-sans">
-                        Email Address <span className="text-buddas-orange">*</span>
-                    </label>
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="kai@example.com"
-                        className={cn(
-                            "w-full bg-white border border-buddas-brown/20 rounded-lg px-5 py-4 text-base text-buddas-brown placeholder-buddas-brown/30 outline-none transition-all duration-200 font-dm-sans",
-                            "focus:border-buddas-teal focus:border-2 focus:bg-white focus:shadow-[0_0_0_4px_rgba(84,191,165,0.1)]",
-                            errors.email && touched.email && "border-buddas-orange focus:border-buddas-orange"
-                        )}
-                        onBlur={() => handleBlur("email")}
-                    />
-                    {errors.email && touched.email && (
-                        <p className="text-buddas-orange text-xs font-medium animate-in slide-in-from-top-1">{errors.email}</p>
-                    )}
-                </div>
-
-                <div className="space-y-2">
-                    <label htmlFor="phone" className="block text-sm font-medium text-buddas-brown uppercase tracking-wide font-dm-sans">
-                        Phone Number <span className="text-buddas-orange">*</span>
-                    </label>
-                    <input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        placeholder="(808) 555-0123"
-                        className={cn(
-                            "w-full bg-white border border-buddas-brown/20 rounded-lg px-5 py-4 text-base text-buddas-brown placeholder-buddas-brown/30 outline-none transition-all duration-200 font-dm-sans",
-                            "focus:border-buddas-teal focus:border-2 focus:bg-white focus:shadow-[0_0_0_4px_rgba(84,191,165,0.1)]",
-                            errors.phone && touched.phone && "border-buddas-orange focus:border-buddas-orange"
-                        )}
-                        onBlur={() => handleBlur("phone")}
-                    />
-                    {errors.phone && touched.phone && (
-                        <p className="text-buddas-orange text-xs font-medium animate-in slide-in-from-top-1">{errors.phone}</p>
-                    )}
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <label htmlFor="eventType" className="block text-sm font-medium text-buddas-brown uppercase tracking-wide font-dm-sans">
-                        Event Type <span className="text-buddas-orange">*</span>
-                    </label>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                        {["Corporate Lunch", "Wedding", "Private Party", "Community"].map((type) => (
-                            <button
-                                key={type}
-                                type="button"
-                                onClick={() => {
-                                    const select = document.getElementById('eventType') as HTMLSelectElement;
-                                    if (select) {
-                                        select.value = type === "Wedding" ? "Wedding / Rehearsal" : type === "Community" ? "Community Event" : type;
-                                        handleBlur("eventType");
-                                        // Trigger change event if needed for other listeners, strictly not needed here as we use native form submission
-                                    }
-                                }}
-                                className="px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-full border border-buddas-brown/10 bg-buddas-brown/5 text-buddas-brown/60 hover:bg-buddas-teal/10 hover:text-buddas-teal hover:border-buddas-teal/30 transition-all"
-                            >
-                                {type}
-                            </button>
-                        ))}
-                    </div>
-                    <div className="relative">
-                        <select
-                            id="eventType"
-                            name="eventType"
-                            defaultValue=""
-                            className={cn(
-                                "w-full bg-white border border-buddas-brown/20 rounded-lg px-5 py-4 text-base text-buddas-brown placeholder-buddas-brown/30 outline-none transition-all duration-200 font-dm-sans appearance-none cursor-pointer",
-                                "focus:border-buddas-teal focus:border-2 focus:bg-white focus:shadow-[0_0_0_4px_rgba(84,191,165,0.1)]",
-                                errors.eventType && touched.eventType && "border-buddas-orange focus:border-buddas-orange"
-                            )}
-                            onBlur={() => handleBlur("eventType")}
-                        >
-                            <option value="" disabled>Select event type...</option>
-                            <option value="Corporate Lunch">Corporate Lunch</option>
-                            <option value="Wedding / Rehearsal">Wedding / Rehearsal</option>
-                            <option value="Private Party">Private Party</option>
-                            <option value="Community Event">Community Event</option>
-                            <option value="Other">Other</option>
-                        </select>
-                        <FileText className="absolute right-5 top-1/2 -translate-y-1/2 text-buddas-brown/40 w-5 h-5 pointer-events-none" />
-                    </div>
-                    {errors.eventType && touched.eventType && (
-                        <p className="text-buddas-orange text-xs font-medium animate-in slide-in-from-top-1">{errors.eventType}</p>
-                    )}
-                </div>
-
-                <div className="space-y-2">
-                    <label htmlFor="guestCount" className="block text-sm font-medium text-buddas-brown uppercase tracking-wide font-dm-sans">
-                        Est. Guest Count <span className="text-buddas-orange">*</span>
-                    </label>
-                    <div className="relative">
-                        <input
-                            id="guestCount"
-                            name="guestCount"
-                            type="number"
-                            min="10"
-                            placeholder="Min 10"
-                            className={cn(
-                                "w-full bg-white border border-buddas-brown/20 rounded-lg px-5 py-4 text-base text-buddas-brown placeholder-buddas-brown/30 outline-none transition-all duration-200 font-dm-sans",
-                                "focus:border-buddas-teal focus:border-2 focus:bg-white focus:shadow-[0_0_0_4px_rgba(84,191,165,0.1)]",
-                                errors.guestCount && touched.guestCount && "border-buddas-orange focus:border-buddas-orange"
-                            )}
-                            onBlur={() => handleBlur("guestCount")}
-                        />
-                        <Users className="absolute right-5 top-1/2 -translate-y-1/2 text-buddas-brown/40 w-5 h-5" />
-                    </div>
-                    {errors.guestCount && touched.guestCount && (
-                        <p className="text-buddas-orange text-xs font-medium animate-in slide-in-from-top-1">{errors.guestCount}</p>
-                    )}
-                </div>
-            </div>
-
-            <div className="space-y-2">
-                <label htmlFor="eventDate" className="block text-sm font-medium text-buddas-brown uppercase tracking-wide font-dm-sans">
-                    Event Date <span className="text-buddas-orange">*</span>
-                </label>
-                <div className="relative">
-                    <input
-                        id="eventDate"
-                        name="eventDate"
-                        type="date"
-                        className={cn(
-                            "w-full bg-white border border-buddas-brown/20 rounded-lg px-5 py-4 text-base text-buddas-brown placeholder-buddas-brown/30 outline-none transition-all duration-200 font-dm-sans",
-                            "focus:border-buddas-teal focus:border-2 focus:bg-white focus:shadow-[0_0_0_4px_rgba(84,191,165,0.1)]",
-                            errors.eventDate && touched.eventDate && "border-buddas-orange focus:border-buddas-orange"
-                        )}
-                        onBlur={() => handleBlur("eventDate")}
-                    />
-                    {/* Calendar icon might overlap with native date picker on some browsers, so we might skip it or position carefully. 
-                        Native date pickers usually have their own indicator. */}
-                </div>
-                {errors.eventDate && touched.eventDate && (
-                    <p className="text-buddas-orange text-xs font-medium animate-in slide-in-from-top-1">{errors.eventDate}</p>
-                )}
-            </div>
-
-            <div className="space-y-2">
-                <label htmlFor="message" className="block text-sm font-medium text-buddas-brown uppercase tracking-wide font-dm-sans">
-                    Additional Details / Dietary Requests
-                </label>
-                <textarea
-                    id="message"
-                    name="message"
-                    rows={4}
-                    placeholder="Tell us about your event, favorite menu items, or any potential allergies..."
-                    className={cn(
-                        "w-full bg-white border border-buddas-brown/20 rounded-lg px-5 py-4 text-base text-buddas-brown placeholder-buddas-brown/30 outline-none transition-all duration-200 resize-none font-dm-sans",
-                        "focus:border-buddas-teal focus:border-2 focus:bg-white focus:shadow-[0_0_0_4px_rgba(84,191,165,0.1)]"
-                    )}
+        <div className="flex flex-col h-full bg-white relative">
+            {/* Progress Bar */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-buddas-brown/5">
+                <motion.div
+                    className="h-full bg-buddas-teal"
+                    initial={{ width: "50%" }}
+                    animate={{ width: step === 1 ? "50%" : "100%" }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
                 />
             </div>
 
-            <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full h-14 bg-buddas-teal text-white hover:bg-buddas-teal-dark font-bold font-poppins text-lg rounded-xl shadow-[0_4px_0_0_#1C5F56,0_8px_20px_-4px_rgba(28,95,86,0.4)] hover:translate-y-[-2px] hover:shadow-[0_6px_0_0_#1C5F56,0_12px_24px_-4px_rgba(28,95,86,0.5)] active:translate-y-1 active:shadow-[0_0_0_0_#1C5F56,inset_0_2px_4px_rgba(0,0,0,0.2)] transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] uppercase tracking-wider"
-            >
-                {isSubmitting ? (
-                    <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Generating Quote...
-                    </>
-                ) : (
-                    "Request Custom Quote"
-                )}
-            </Button>
-            <p className="text-center text-buddas-brown/60 text-xs font-dm-sans">
-                No payment required to request a quote. We'll verify availability first.
-            </p>
-        </form>
+            <form ref={formRef} onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden" noValidate>
+                <div className="flex-1 overflow-x-hidden overflow-y-auto px-6 pt-8 pb-32 relative">
+                    <AnimatePresence initial={false} custom={direction} mode="wait">
+
+                        {/* STEP 1: EVENT DETAILS */}
+                        {step === 1 && (
+                            <motion.div
+                                key="step1"
+                                custom={direction}
+                                variants={variants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
+                                className="space-y-8 min-h-full"
+                            >
+                                <div className="space-y-2 text-center mb-6">
+                                    <h2 className="text-2xl font-bold text-buddas-brown font-poppins">Tell us about your event</h2>
+                                    <p className="text-buddas-brown/60 text-sm">Step 1 of 2</p>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <label className="text-sm font-bold text-buddas-brown uppercase tracking-wide">
+                                        What's the occasion? <span className="text-buddas-orange">*</span>
+                                    </label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {EVENT_TYPES.map((type) => (
+                                            <motion.button
+                                                key={type.id}
+                                                type="button"
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={() => {
+                                                    setFormData({ ...formData, eventType: type.id });
+                                                    if (errors.eventType) setErrors({ ...errors, eventType: undefined });
+                                                }}
+                                                className={cn(
+                                                    "p-4 rounded-xl border-2 text-left transition-all duration-200 flex flex-col gap-2",
+                                                    formData.eventType === type.id
+                                                        ? "border-buddas-teal bg-buddas-teal/5 shadow-md"
+                                                        : "border-buddas-brown/10 bg-white hover:border-buddas-teal/50"
+                                                )}
+                                            >
+                                                <type.icon className={cn("w-6 h-6", formData.eventType === type.id ? "text-buddas-teal" : "text-buddas-brown/60")} />
+                                                <span className={cn(
+                                                    "text-sm font-bold",
+                                                    formData.eventType === type.id ? "text-buddas-teal" : "text-buddas-brown"
+                                                )}>{type.label}</span>
+                                            </motion.button>
+                                        ))}
+                                    </div>
+                                    {errors.eventType && <p className="text-buddas-orange text-xs font-medium animate-pulse">{errors.eventType}</p>}
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-bold text-buddas-brown uppercase tracking-wide">
+                                            When is it? <span className="text-buddas-orange">*</span>
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="date"
+                                                name="eventDate"
+                                                value={formData.eventDate}
+                                                onChange={handleInputChange}
+                                                className={cn(
+                                                    "w-full bg-white border-2 rounded-xl px-4 py-4 text-base font-dm-sans outline-none transition-all min-h-[58px]",
+                                                    "focus:border-buddas-teal focus:shadow-[0_0_0_4px_rgba(84,191,165,0.1)]",
+                                                    errors.eventDate ? "border-buddas-orange" : "border-buddas-brown/10"
+                                                )}
+                                            />
+                                        </div>
+                                        {errors.eventDate && <p className="text-buddas-orange text-xs font-medium">{errors.eventDate}</p>}
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-bold text-buddas-brown uppercase tracking-wide">
+                                            How many guests? <span className="text-buddas-orange">*</span>
+                                        </label>
+                                        <div className="flex items-center gap-3">
+                                            <motion.button
+                                                type="button"
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => updateGuests(-10)}
+                                                className="w-14 h-14 rounded-xl border-2 border-buddas-brown/10 flex items-center justify-center text-buddas-brown hover:bg-buddas-brown/5"
+                                            >
+                                                <Minus className="w-5 h-5" />
+                                            </motion.button>
+                                            <div className="flex-1 relative">
+                                                <input
+                                                    type="number"
+                                                    name="guestCount"
+                                                    value={formData.guestCount}
+                                                    onChange={handleInputChange}
+                                                    className={cn(
+                                                        "w-full text-center bg-white border-2 rounded-xl py-4 text-xl font-bold font-dm-sans outline-none min-h-[58px]",
+                                                        "focus:border-buddas-teal",
+                                                        errors.guestCount ? "border-buddas-orange" : "border-buddas-brown/10"
+                                                    )}
+                                                />
+                                            </div>
+                                            <motion.button
+                                                type="button"
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => updateGuests(10)}
+                                                className="w-14 h-14 rounded-xl bg-buddas-brown text-white flex items-center justify-center hover:bg-buddas-brown/90 shadow-lg shadow-buddas-brown/20"
+                                            >
+                                                <Plus className="w-5 h-5" />
+                                            </motion.button>
+                                        </div>
+                                        {errors.guestCount && <p className="text-buddas-orange text-xs font-medium">{errors.guestCount}</p>}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* STEP 2: CONTACT INFO */}
+                        {step === 2 && (
+                            <motion.div
+                                key="step2"
+                                custom={direction}
+                                variants={variants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
+                                className="space-y-6 min-h-full"
+                            >
+                                <div className="space-y-2 text-center mb-6">
+                                    <h2 className="text-2xl font-bold text-buddas-brown font-poppins">Where should we send it?</h2>
+                                    <p className="text-buddas-brown/60 text-sm">Step 2 of 2</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-buddas-brown">First Name</label>
+                                        <input
+                                            name="firstName"
+                                            value={formData.firstName}
+                                            onChange={handleInputChange}
+                                            placeholder="Kai"
+                                            className={cn("w-full bg-white border-2 rounded-xl px-4 py-3 outline-none focus:border-buddas-teal", errors.firstName ? "border-buddas-orange" : "border-buddas-brown/10")}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-buddas-brown">Last Name</label>
+                                        <input
+                                            name="lastName"
+                                            value={formData.lastName}
+                                            onChange={handleInputChange}
+                                            placeholder="Loa"
+                                            className={cn("w-full bg-white border-2 rounded-xl px-4 py-3 outline-none focus:border-buddas-teal", errors.lastName ? "border-buddas-orange" : "border-buddas-brown/10")}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-buddas-brown">Email Address</label>
+                                    <input
+                                        name="email"
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        placeholder="kai@example.com"
+                                        className={cn("w-full bg-white border-2 rounded-xl px-4 py-3 outline-none focus:border-buddas-teal", errors.email ? "border-buddas-orange" : "border-buddas-brown/10")}
+                                    />
+                                    {errors.email && <p className="text-buddas-orange text-xs">{errors.email}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-buddas-brown">Phone Number</label>
+                                    <input
+                                        name="phone"
+                                        type="tel"
+                                        value={formData.phone}
+                                        onChange={handleInputChange}
+                                        placeholder="(808) 555-0123"
+                                        className={cn("w-full bg-white border-2 rounded-xl px-4 py-3 outline-none focus:border-buddas-teal", errors.phone ? "border-buddas-orange" : "border-buddas-brown/10")}
+                                    />
+                                    {errors.phone && <p className="text-buddas-orange text-xs">{errors.phone}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-buddas-brown">Dietary Requests / Details</label>
+                                    <textarea
+                                        name="message"
+                                        value={formData.message}
+                                        onChange={handleInputChange}
+                                        rows={3}
+                                        placeholder="Any vibes we should know about?"
+                                        className="w-full bg-white border-2 border-buddas-brown/10 rounded-xl px-4 py-3 outline-none focus:border-buddas-teal resize-none"
+                                    />
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                {/* STICKY FOOTER */}
+                <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-buddas-brown/10 z-50 md:static md:bg-transparent md:border-0 md:p-0">
+                    <div className="max-w-md mx-auto flex gap-3">
+                        {step === 2 && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleBack}
+                                className="h-14 w-14 rounded-xl border-2 border-buddas-brown/10 flex items-center justify-center shrink-0"
+                            >
+                                <ChevronLeft className="w-6 h-6 text-buddas-brown" />
+                            </Button>
+                        )}
+                        <Button
+                            type={step === 2 ? "submit" : "button"}
+                            onClick={step === 1 ? handleNext : undefined}
+                            disabled={isSubmitting}
+                            className={cn(
+                                "flex-1 h-14 text-white font-bold font-poppins text-lg rounded-xl shadow-lg transition-all uppercase tracking-wide",
+                                isSubmitting ? "bg-buddas-teal/80" : "bg-buddas-teal hover:bg-buddas-teal-dark hover:translate-y-[-2px]"
+                            )}
+                        >
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                    Sending...
+                                </>
+                            ) : step === 1 ? (
+                                <span className="flex items-center">
+                                    Next Step <ChevronRight className="ml-2 w-5 h-5" />
+                                </span>
+                            ) : (
+                                "Request Quote"
+                            )}
+                        </Button>
+                    </div>
+                    {step === 1 && (
+                        <p className="text-center text-buddas-brown/50 text-[10px] font-dm-sans mt-3">
+                            Check availability instantly. No payment required.
+                        </p>
+                    )}
+                </div>
+            </form>
+        </div>
     );
 }

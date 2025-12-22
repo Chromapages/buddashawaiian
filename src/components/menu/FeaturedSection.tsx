@@ -1,8 +1,7 @@
 "use client";
 
 import { MenuCard } from "./MenuCard";
-import { useRef } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -13,17 +12,21 @@ interface FeaturedSectionProps {
 }
 
 export function FeaturedSection({ items, onItemClick, title = "Customer Favorites" }: FeaturedSectionProps) {
-    const scrollContainerRef = useRef(null);
-    const { scrollXProgress } = useScroll({ container: scrollContainerRef });
-    const scaleX = useSpring(scrollXProgress, {
-        stiffness: 100,
-        damping: 30,
-        restDelta: 0.001
-    });
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [scrollProgress, setScrollProgress] = useState(0);
+
+    const handleScroll = () => {
+        if (!scrollContainerRef.current) return;
+        const container = scrollContainerRef.current;
+        const maxScroll = container.scrollWidth - container.clientWidth;
+        if (maxScroll > 0) {
+            setScrollProgress((container.scrollLeft / maxScroll) * 100);
+        }
+    };
 
     // Safe fallback if no items to prevent useScroll error (ref must be attached)
     if (!items || items.length === 0) {
-        return <div ref={scrollContainerRef} className="hidden" />;
+        return null;
     }
 
     // Mobile: Show limited items to prevent endless scrolling
@@ -64,6 +67,7 @@ export function FeaturedSection({ items, onItemClick, title = "Customer Favorite
                     <div className="md:hidden relative">
                         <div
                             ref={scrollContainerRef}
+                            onScroll={handleScroll}
                             className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-8 -mx-6 px-6 no-scrollbar"
                         >
                             {mobileItems.map((item, idx) => (
@@ -81,9 +85,9 @@ export function FeaturedSection({ items, onItemClick, title = "Customer Favorite
 
                         {/* Mobile Live Progress Bar */}
                         <div className="h-1 w-full bg-buddas-brown/5 rounded-full mt-2 overflow-hidden max-w-[200px] mx-auto">
-                            <motion.div
-                                className="h-full bg-buddas-teal"
-                                style={{ scaleX, transformOrigin: 'left' }}
+                            <div
+                                className="h-full bg-buddas-teal transition-all duration-100"
+                                style={{ width: `${scrollProgress}%` }}
                             />
                         </div>
                     </div>

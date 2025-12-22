@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { MenuCard } from "./MenuCard";
 import { MenuModal } from "./MenuModal";
-import { useScroll, useMotionValueEvent } from "framer-motion";
 import {
     ChefHat,
     Sandwich,
@@ -141,22 +140,27 @@ export function MenuClient({ categories, featuredItems = [], pageSettings }: Men
         }
     };
 
-    // Scroll Detection for Collapsible Header
-    const { scrollY } = useScroll();
+    // Scroll Detection for Collapsible Header (Native scroll - passive listener)
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const lastScrollY = useRef(0);
 
-    useMotionValueEvent(scrollY, "change", (latest) => {
-        const direction = latest - lastScrollY.current;
-        if (Math.abs(direction) < 50) return; // Debounce small scrolls
+    useEffect(() => {
+        const handleScroll = () => {
+            const latest = window.scrollY;
+            const direction = latest - lastScrollY.current;
+            if (Math.abs(direction) < 50) return; // Debounce small scrolls
 
-        if (direction > 0 && latest > 200) {
-            setIsHeaderVisible(false); // Hide on scroll down
-        } else {
-            setIsHeaderVisible(true); // Show on scroll up
-        }
-        lastScrollY.current = latest;
-    });
+            if (direction > 0 && latest > 200) {
+                setIsHeaderVisible(false); // Hide on scroll down
+            } else {
+                setIsHeaderVisible(true); // Show on scroll up
+            }
+            lastScrollY.current = latest;
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     return (
         <div className="bg-buddas-cream min-h-screen">
@@ -206,7 +210,7 @@ export function MenuClient({ categories, featuredItems = [], pageSettings }: Men
 
             {/* Sticky Navigation & Search */}
             <div className="sticky top-[70px] md:top-[80px] lg:top-[90px] z-40 bg-white border-b border-buddas-brown/5 shadow-md">
-                <div className="max-w-[1280px] xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-16 py-4 flex flex-col gap-4">
+                <div className="w-full max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-16 py-4 flex flex-col gap-4">
 
                     {/* Search & Filters Row - Always Visible */}
                     <div className="flex flex-row items-center justify-between gap-3 w-full">

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
 
 interface TrustedByProps {
     trustedByData?: {
@@ -13,9 +12,52 @@ interface TrustedByProps {
             logo?: string;
         }[];
     };
+    isLoading?: boolean;
 }
 
-export function TrustedBy({ trustedByData }: TrustedByProps) {
+function TrustedBySkeleton() {
+    return (
+        <section className="py-6 md:py-10 lg:py-12 xl:py-16 bg-buddas-cream border-b border-buddas-brown/5 overflow-hidden motion-safe:animate-pulse">
+            <div className="max-w-[1280px] xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 xl:px-12 2xl:px-16 text-center">
+                {/* Desktop Title Skeleton */}
+                <div className="hidden md:flex justify-center mb-12">
+                    <div className="w-80 h-10 bg-buddas-brown/10 rounded-lg" />
+                </div>
+
+                {/* Mobile Header Skeleton */}
+                <div className="md:hidden text-center mb-6">
+                    <div className="w-32 h-3 bg-buddas-brown/10 rounded mx-auto" />
+                </div>
+
+                {/* Mobile Grid Skeleton */}
+                <div className="md:hidden grid grid-cols-2 gap-3 px-4 pb-6">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                        <div
+                            key={i}
+                            className={`flex items-center justify-center p-4 bg-white rounded-xl border border-buddas-brown/5 shadow-sm ${i === 5 ? "col-span-2" : ""}`}
+                        >
+                            <div className="w-24 h-6 bg-buddas-brown/10 rounded" />
+                        </div>
+                    ))}
+                </div>
+
+                {/* Desktop Grid Skeleton */}
+                <div className="hidden md:flex flex-wrap justify-center gap-y-8 gap-x-12">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                        <div key={i} className="w-32 h-10 bg-buddas-brown/10 rounded" />
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+export function TrustedBy({ trustedByData, isLoading }: TrustedByProps) {
+    // Show skeleton if explicitly loading
+    if (isLoading) {
+        return <TrustedBySkeleton />;
+    }
+
     const title = trustedByData?.title || "Order Buddas on Your Favorite Apps";
     const platforms = trustedByData?.platforms || [
         { name: "Uber Eats", url: "https://www.ubereats.com" },
@@ -64,39 +106,27 @@ export function TrustedBy({ trustedByData }: TrustedByProps) {
                     </span>
                 </div>
 
-                {/* Mobile Marquee View (< md) */}
-                <div className="md:hidden relative flex overflow-hidden mask-linear-fade">
-                    <motion.div
-                        className="flex items-center whitespace-nowrap"
-                        animate={{ x: ["0%", "-50%"] }}
-                        whileTap={{ animationPlayState: "paused" }}
-                        transition={{
-                            repeat: Infinity,
-                            ease: "linear",
-                            duration: 20, // Adjust speed here
-                            repeatType: "loop"
-                        }}
-                        style={{
-                            // Ensure the animation respects the play state even when controlled via Framer Motion's animate prop
-                            //@ts-ignore
-                            '--play-state': 'running'
-                        }}
-                    >
-                        {/* Duplicate lists for seamless loop */}
-                        {[...platforms, ...platforms, ...platforms].map((platform, index) => (
-                            <LogoItem key={`marquee-${index}`} platform={platform} />
-                        ))}
-                    </motion.div>
-
-                    {/* Gradient Masks for fade effect */}
-                    <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-buddas-cream to-transparent z-10 pointer-events-none" />
-                    <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-buddas-cream to-transparent z-10 pointer-events-none" />
+                {/* Mobile Grid View (< md) */}
+                <div className="md:hidden grid grid-cols-2 gap-3 px-4 pb-6">
+                    {platforms.map((platform, index) => {
+                        const isLastAndOdd = index === platforms.length - 1 && platforms.length % 2 !== 0;
+                        return (
+                            <div
+                                key={`mobile-grid-${index}`}
+                                className={`flex items-center justify-center p-4 bg-white rounded-xl border border-buddas-brown/5 shadow-sm ${isLastAndOdd ? "col-span-2" : ""}`}
+                            >
+                                <LogoItem platform={platform} />
+                            </div>
+                        );
+                    })}
                 </div>
 
                 {/* Desktop Grid View (md+) */}
                 <div className="hidden md:flex flex-wrap justify-center gap-y-8 gap-x-12">
                     {platforms.map((platform, index) => (
-                        <LogoItem key={`desktop-${index}`} platform={platform} />
+                        <div key={`desktop-${index}`}>
+                            <LogoItem platform={platform} />
+                        </div>
                     ))}
                 </div>
             </div>
